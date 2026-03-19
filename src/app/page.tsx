@@ -1,9 +1,9 @@
-
 "use client"
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, GraduationCap, Building2, Library, Mail, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { GraduationCap, Building2, Library, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,8 +63,15 @@ export default function LoginPage() {
       <div className="max-w-4xl w-full grid md:grid-cols-2 gap-8 items-center">
         <div className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="bg-primary p-3 rounded-2xl shadow-lg">
-              <ShieldCheck className="w-8 h-8 text-white" />
+            <div className="bg-white p-2 rounded-2xl shadow-lg border border-border">
+              <Image 
+                src="https://upload.wikimedia.org/wikipedia/en/c/c6/New_Era_University.svg" 
+                alt="New Era University Logo"
+                width={56}
+                height={56}
+                className="object-contain"
+                priority
+              />
             </div>
             <h1 className="text-3xl font-headline font-extrabold text-primary">Academia Access</h1>
           </div>

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { 
@@ -8,10 +7,10 @@ import {
   FileBarChart, 
   LogOut,
   ChevronRight,
-  ShieldCheck,
   Library,
   Activity
 } from "lucide-react";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -44,8 +43,14 @@ export function AppSidebar() {
   return (
     <div className="flex flex-col h-full bg-primary text-primary-foreground w-64 border-r border-border p-4 shadow-xl">
       <div className="flex items-center gap-3 mb-10 px-2">
-        <div className="bg-accent p-2 rounded-lg">
-          <ShieldCheck className="w-6 h-6 text-white" />
+        <div className="bg-white p-1.5 rounded-lg shadow-sm">
+          <Image 
+            src="https://upload.wikimedia.org/wikipedia/en/c/c6/New_Era_University.svg" 
+            alt="New Era University Logo"
+            width={32}
+            height={32}
+            className="object-contain"
+          />
         </div>
         <h1 className="text-xl font-headline font-bold">Academia Access</h1>
       </div>
