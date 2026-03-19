@@ -1,0 +1,23 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "A modern university library interior with large windows and students studying.",
+      "imageUrl": "https://picsum.photos/seed/library1/1200/800",
+      "imageHint": "university library"
+    },
+    {
+      "id": "dean-office",
+      "description": "A clean, professional administrative office setting.",
+      "imageUrl": "https://picsum.photos/seed/office1/600/400",
+      "imageHint": "professional office"
+    },
+    {
+      "id": "visitor-checkin",
+      "description": "Person using a tablet for digital check-in.",
+      "imageUrl": "https://picsum.photos/seed/checkin/800/600",
+      "imageHint": "digital check-in"
+    }
+  ]
+}
