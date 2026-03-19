@@ -1,7 +1,7 @@
 
 "use client"
 
-import { User, VisitRecord } from "./types";
+import { User, VisitRecord, UserType } from "./types";
 import { useState, useEffect } from "react";
 
 // Initial mock data
@@ -10,6 +10,7 @@ const MOCK_ADMIN: User = {
   email: "admin@neu.edu.ph",
   name: "Dr. Admin Professor",
   role: "Admin",
+  userType: "Staff",
   isBlocked: false,
   institutionEmail: "admin@neu.edu.ph"
 };
@@ -21,6 +22,7 @@ const MOCK_USERS: User[] = [
     email: "visitor@neu.edu.ph",
     name: "John Doe Student",
     role: "Visitor",
+    userType: "Student",
     isBlocked: false,
     institutionEmail: "visitor@neu.edu.ph"
   }
@@ -32,6 +34,7 @@ const INITIAL_VISITS: VisitRecord[] = [
     visitorId: "user-1",
     visitorName: "John Doe Student",
     visitorEmail: "visitor@neu.edu.ph",
+    visitorType: "Student",
     department: "College of Engineering",
     reasonForVisit: "Research Project",
     timestamp: new Date().toISOString(),
@@ -68,17 +71,19 @@ export function useAuthStore() {
     // If user doesn't exist but has the right domain, auto-register them
     if (!user && email.endsWith("@neu.edu.ph")) {
       const namePrefix = email.split('@')[0];
-      // Simple name formatter: john.doe -> John Doe
       const formattedName = namePrefix
         .split(/[._-]/)
         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
         .join(' ');
 
+      const isAdmin = email.startsWith("admin");
+
       user = {
         id: `u-${Date.now()}`,
         email: email,
-        name: formattedName || "New Student",
-        role: email.startsWith("admin") ? "Admin" : "Visitor",
+        name: formattedName || "New User",
+        role: isAdmin ? "Admin" : "Visitor",
+        userType: isAdmin ? "Staff" : "Student",
         isBlocked: false,
         institutionEmail: email
       };

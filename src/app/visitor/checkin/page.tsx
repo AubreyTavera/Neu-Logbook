@@ -1,14 +1,15 @@
+
 "use client"
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuthStore } from "@/lib/auth-store";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Library, BookOpen, Clock } from "lucide-react";
+import { CheckCircle2, Library, Clock, UserCircle } from "lucide-react";
+import { UserType } from "@/lib/types";
 
 const DEPARTMENTS = [
   "College of Engineering",
@@ -28,6 +29,8 @@ const REASONS = [
   "Others",
 ];
 
+const VISITOR_TYPES: UserType[] = ["Student", "Teacher", "Staff"];
+
 export default function CheckInPage() {
   const { currentUser, checkIn } = useAuthStore();
   const { toast } = useToast();
@@ -37,12 +40,13 @@ export default function CheckInPage() {
   const [formData, setFormData] = useState({
     department: "",
     reason: "",
+    visitorType: currentUser?.userType || "Student" as UserType,
     location: "Library" as "Library" | "Dean",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.department || !formData.reason) {
+    if (!formData.department || !formData.reason || !formData.visitorType) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -58,6 +62,7 @@ export default function CheckInPage() {
         visitorId: currentUser?.id || "anon",
         visitorName: currentUser?.name || "Anonymous",
         visitorEmail: currentUser?.email || "anon@neu.edu.ph",
+        visitorType: formData.visitorType,
         department: formData.department,
         reasonForVisit: formData.reason,
         location: formData.location,
@@ -116,14 +121,14 @@ export default function CheckInPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Department</label>
-                    <Select onValueChange={(val) => setFormData({...formData, department: val})}>
+                    <label className="text-sm font-medium">Designation</label>
+                    <Select defaultValue={formData.visitorType} onValueChange={(val: UserType) => setFormData({...formData, visitorType: val})}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Department" />
+                        <SelectValue placeholder="Are you a Student/Teacher?" />
                       </SelectTrigger>
                       <SelectContent>
-                        {DEPARTMENTS.map(dept => (
-                          <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                        {VISITOR_TYPES.map(type => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -142,18 +147,33 @@ export default function CheckInPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Reason for Visit</label>
-                  <Select onValueChange={(val) => setFormData({...formData, reason: val})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Reason" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REASONS.map(reason => (
-                        <SelectItem key={reason} value={reason}>{reason}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Department / College</label>
+                    <Select onValueChange={(val) => setFormData({...formData, department: val})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DEPARTMENTS.map(dept => (
+                          <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Reason for Visit</label>
+                    <Select onValueChange={(val) => setFormData({...formData, reason: val})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Reason" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {REASONS.map(reason => (
+                          <SelectItem key={reason} value={reason}>{reason}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
