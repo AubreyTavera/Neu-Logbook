@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo } from "react";
@@ -11,7 +10,8 @@ import {
   Filter,
   UserCheck,
   GraduationCap,
-  Briefcase
+  Briefcase,
+  Activity
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,11 +37,19 @@ import {
 import { cn } from "@/lib/utils";
 
 const COLLEGES = [
-  "College of Engineering",
+  "College of Agriculture",
   "College of Arts and Sciences",
-  "College of Education",
-  "College of Law",
   "College of Business Administration",
+  "College of Communication",
+  "College of Computer Studies",
+  "College of Criminology",
+  "College of Education",
+  "College of Engineering",
+  "College of Law",
+  "College of Medicine",
+  "College of Music",
+  "College of Nursing",
+  "School of Management",
   "Graduate School",
 ];
 
@@ -51,6 +59,8 @@ const REASONS = [
   "Book Borrowing/Return",
   "Computer Lab Usage",
   "Meeting with Librarian",
+  "Consultation",
+  "Administrative Matter",
   "Others",
 ];
 

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react";
@@ -12,11 +11,19 @@ import { CheckCircle2, Library, Clock, UserCircle } from "lucide-react";
 import { UserType } from "@/lib/types";
 
 const DEPARTMENTS = [
-  "College of Engineering",
+  "College of Agriculture",
   "College of Arts and Sciences",
-  "College of Education",
-  "College of Law",
   "College of Business Administration",
+  "College of Communication",
+  "College of Computer Studies",
+  "College of Criminology",
+  "College of Education",
+  "College of Engineering",
+  "College of Law",
+  "College of Medicine",
+  "College of Music",
+  "College of Nursing",
+  "School of Management",
   "Graduate School",
 ];
 
@@ -26,6 +33,8 @@ const REASONS = [
   "Book Borrowing/Return",
   "Computer Lab Usage",
   "Meeting with Librarian",
+  "Consultation",
+  "Administrative Matter",
   "Others",
 ];
 
