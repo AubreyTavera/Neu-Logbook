@@ -3,20 +3,27 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, GraduationCap, Building2, Library } from "lucide-react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { ShieldCheck, GraduationCap, Building2, Library, Lock, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/lib/auth-store";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/firebase";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const router = useRouter();
   const { login } = useAuthStore();
   const { toast } = useToast();
+  const auth = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.endsWith("@neu.edu.ph")) {
       toast({
@@ -27,19 +34,44 @@ export default function LoginPage() {
       return;
     }
 
-    const result = login(email);
-    if (result.success) {
-      if (email.startsWith("admin")) {
+    setLoading(true);
+
+    try {
+      if (isAdminMode) {
+        // Real Firebase Auth for Admins/Faculty
+        if (!password) {
+          toast({
+            title: "Password Required",
+            description: "Faculty and administrators must provide a password for verification.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        
+        await signInWithEmailAndPassword(auth, email, password);
         router.push("/admin/dashboard");
       } else {
-        router.push("/visitor/checkin");
+        // Session-based login for visitors/students (Mock)
+        const result = login(email);
+        if (result.success) {
+          router.push("/visitor/checkin");
+        } else {
+          toast({
+            title: "Login Failed",
+            description: result.error,
+            variant: "destructive",
+          });
+        }
       }
-    } else {
+    } catch (err: any) {
       toast({
-        title: "Login Failed",
-        description: result.error,
+        title: "Authentication Error",
+        description: err.message || "Invalid credentials for this institutional account.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,27 +115,49 @@ export default function LoginPage() {
 
         <Card className="shadow-2xl border-none">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-headline">Institutional Login</CardTitle>
+            <CardTitle className="text-2xl font-headline">
+              {isAdminMode ? "Faculty/Admin Verification" : "Institutional Login"}
+            </CardTitle>
             <CardDescription>
-              Sign in with your university Google account (@neu.edu.ph)
+              {isAdminMode 
+                ? "Secure login required for administrative access." 
+                : "Sign in with your university email (@neu.edu.ph)"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Institutional Email</label>
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Mail className="w-4 h-4" /> Institutional Email
+                </label>
                 <Input 
                   placeholder="your.name@neu.edu.ph" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="h-12 text-lg"
+                  required
                 />
-                <p className="text-[10px] text-muted-foreground">
-                  Access is granted to all verified institutional accounts.
-                </p>
               </div>
-              <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-lg font-medium">
-                Continue
+
+              {isAdminMode && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Lock className="w-4 h-4" /> Password
+                  </label>
+                  <Input 
+                    type="password"
+                    placeholder="Enter secure password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-12 text-lg"
+                    required
+                  />
+                </div>
+              )}
+
+              <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-lg font-medium" disabled={loading}>
+                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                {isAdminMode ? "Verify & Login" : "Continue as Visitor"}
               </Button>
             </form>
 
@@ -112,20 +166,34 @@ export default function LoginPage() {
                 <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Role Presets (Mock)</span>
+                <span className="bg-card px-2 text-muted-foreground">Select Access Level</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("student.one@neu.edu.ph")}>
+              <Button 
+                variant={!isAdminMode ? "secondary" : "outline"} 
+                className="h-20 flex-col gap-2" 
+                onClick={() => setIsAdminMode(false)}
+              >
                 <GraduationCap className="w-6 h-6" />
                 <span>Student</span>
               </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("admin@neu.edu.ph")}>
+              <Button 
+                variant={isAdminMode ? "secondary" : "outline"} 
+                className="h-20 flex-col gap-2" 
+                onClick={() => setIsAdminMode(true)}
+              >
                 <Building2 className="w-6 h-6" />
                 <span>Faculty/Admin</span>
               </Button>
             </div>
+
+            {isAdminMode && (
+              <p className="text-center text-xs text-muted-foreground mt-4">
+                First time? <Button variant="link" className="p-0 h-auto text-xs" onClick={() => router.push('/admin/register')}>Register as Admin</Button>
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

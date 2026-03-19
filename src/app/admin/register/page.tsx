@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Loader2, AlertCircle, Lock, User, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,7 @@ import { FirestorePermissionError } from '@/firebase/errors';
 export default function AdminRegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +32,6 @@ export default function AdminRegisterPage() {
     e.preventDefault();
     setError(null);
 
-    // Strict Institutional Domain Check
     if (!email.endsWith('@neu.edu.ph')) {
       setError('Only institutional @neu.edu.ph emails are permitted for administration.');
       return;
@@ -42,25 +42,27 @@ export default function AdminRegisterPage() {
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (!auth || !db) throw new Error('Firebase services are unavailable.');
 
-      // 1. Create User in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 2. Prepare Profile Data
       const profileData = {
         uid: user.uid,
         email: user.email,
         name: name,
-        role: 'admin', // Assigned as admin explicitly
+        role: 'admin',
         createdAt: new Date().toISOString(),
       };
 
-      // 3. Initialize Profile in 'users' collection
       const docRef = doc(db, 'users', user.uid);
       
       setDoc(docRef, profileData)
@@ -78,7 +80,6 @@ export default function AdminRegisterPage() {
         description: `Welcome, ${name}. Your administrative profile has been initialized.`,
       });
 
-      // Redirect to dashboard
       router.push('/admin/dashboard');
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred during registration.');
@@ -95,7 +96,7 @@ export default function AdminRegisterPage() {
             <ShieldCheck className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-headline font-extrabold text-primary">Admin Registration</h1>
-          <p className="text-muted-foreground">Establish a new institutional administrator account.</p>
+          <p className="text-muted-foreground">Establish a new institutional administrator account with secure verification.</p>
         </div>
 
         <Card className="shadow-xl border-none">
@@ -116,7 +117,9 @@ export default function AdminRegisterPage() {
               )}
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Full Name</label>
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <User className="w-4 h-4" /> Full Name
+                </label>
                 <Input 
                   placeholder="e.g. Dr. Jane Smith" 
                   value={name}
@@ -126,7 +129,9 @@ export default function AdminRegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">NEU Email Address</label>
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Mail className="w-4 h-4" /> NEU Email Address
+                </label>
                 <Input 
                   type="email"
                   placeholder="name@neu.edu.ph" 
@@ -137,12 +142,27 @@ export default function AdminRegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Secure Password</label>
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Lock className="w-4 h-4" /> Secure Password
+                </label>
                 <Input 
                   type="password"
                   placeholder="Minimum 8 characters" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Lock className="w-4 h-4" /> Confirm Password
+                </label>
+                <Input 
+                  type="password"
+                  placeholder="Re-enter your password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
