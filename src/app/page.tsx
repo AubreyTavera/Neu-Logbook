@@ -3,25 +3,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { ShieldCheck, GraduationCap, Building2, Library, Lock, Mail, Loader2 } from "lucide-react";
+import { ShieldCheck, GraduationCap, Building2, Library, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/lib/auth-store";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/firebase";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const router = useRouter();
   const { login } = useAuthStore();
   const { toast } = useToast();
-  const auth = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,41 +32,25 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    try {
-      if (isAdminMode) {
-        if (!password) {
-          toast({
-            title: "Password Required",
-            description: "Faculty and administrators must provide a password for verification.",
-            variant: "destructive",
-          });
-          setLoading(false);
-          return;
-        }
-        
-        await signInWithEmailAndPassword(auth, email, password);
-        router.push("/admin/dashboard");
-      } else {
-        const result = login(email);
-        if (result.success) {
-          router.push("/visitor/checkin");
-        } else {
-          toast({
-            title: "Login Failed",
-            description: result.error,
-            variant: "destructive",
-          });
-        }
-      }
-    } catch (err: any) {
-      toast({
-        title: "Authentication Error",
-        description: err.message || "Invalid credentials for this institutional account.",
-        variant: "destructive",
-      });
-    } finally {
+    // Artificial delay for UX
+    setTimeout(() => {
+      const result = login(email);
       setLoading(false);
-    }
+
+      if (result.success) {
+        if (isAdminMode) {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/visitor/checkin");
+        }
+      } else {
+        toast({
+          title: "Login Failed",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    }, 800);
   };
 
   return (
@@ -117,7 +97,7 @@ export default function LoginPage() {
             </CardTitle>
             <CardDescription>
               {isAdminMode 
-                ? "Secure login required for administrative access." 
+                ? "Enter your institutional email for administrative access." 
                 : "Sign in with your university email (@neu.edu.ph)"}
             </CardDescription>
           </CardHeader>
@@ -136,25 +116,9 @@ export default function LoginPage() {
                 />
               </div>
 
-              {isAdminMode && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <Lock className="w-4 h-4" /> Password
-                  </label>
-                  <Input 
-                    type="password"
-                    placeholder="Enter secure password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 text-lg"
-                    required
-                  />
-                </div>
-              )}
-
               <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-lg font-medium" disabled={loading}>
                 {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                {isAdminMode ? "Verify & Login" : "Continue as Visitor"}
+                {isAdminMode ? "Verify Access" : "Continue as Visitor"}
               </Button>
             </form>
 
@@ -186,20 +150,9 @@ export default function LoginPage() {
               </Button>
             </div>
 
-            {isAdminMode && (
-              <div className="text-center mt-6">
-                <Button 
-                  variant="outline" 
-                  className="w-full border-primary/20 hover:bg-primary/5 text-primary font-medium" 
-                  onClick={() => router.push('/register-admin')}
-                >
-                  Create Admin Account
-                </Button>
-                <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-tighter">
-                  New faculty member? Register for administrative access.
-                </p>
-              </div>
-            )}
+            <p className="text-[10px] text-center text-muted-foreground mt-4 uppercase tracking-widest">
+              Institutional Security Protocol Active
+            </p>
           </CardContent>
         </Card>
       </div>

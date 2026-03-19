@@ -1,11 +1,10 @@
 
 "use client"
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { doc } from "firebase/firestore";
 import { AppSidebar } from "@/components/layout/sidebar";
-import { useUser, useDoc, useFirestore } from "@/firebase";
+import { useAuthStore } from "@/lib/auth-store";
 import { Loader2 } from "lucide-react";
 
 export default function AdminLayout({
@@ -13,26 +12,17 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading: authLoading } = useUser();
-  const db = useFirestore();
+  const { currentUser } = useAuthStore();
   const router = useRouter();
 
-  const userDocRef = useMemo(() => 
-    user ? doc(db, 'users', user.uid) : null, 
-    [db, user]
-  );
-
-  const { data: profile, loading: profileLoading } = useDoc(userDocRef);
-
   useEffect(() => {
-    if (!authLoading && !profileLoading) {
-      if (!user || (profile as any)?.role !== 'admin') {
-        router.push("/");
-      }
+    // If no user is logged in or user is not an admin, redirect to login
+    if (!currentUser || currentUser.role !== 'Admin') {
+      router.push("/");
     }
-  }, [user, profile, authLoading, profileLoading, router]);
+  }, [currentUser, router]);
 
-  if (authLoading || profileLoading) {
+  if (!currentUser) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -40,7 +30,7 @@ export default function AdminLayout({
     );
   }
 
-  if (!user || (profile as any)?.role !== 'admin') {
+  if (currentUser.role !== 'Admin') {
     return null;
   }
 

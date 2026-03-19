@@ -76,7 +76,8 @@ export function useAuthStore() {
         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
         .join(' ');
 
-      const isAdmin = email.startsWith("admin");
+      // Designate anything starting with "admin" or "dean" as Admin role
+      const isAdmin = email.startsWith("admin") || email.startsWith("dean");
 
       user = {
         id: `u-${Date.now()}`,
