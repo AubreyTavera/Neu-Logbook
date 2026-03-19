@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react";
@@ -18,10 +17,10 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.includes("@academia.edu") && !email.includes("@admin.com")) {
+    if (!email.endsWith("@neu.edu.ph")) {
       toast({
         title: "Access Restricted",
-        description: "Please use your institutional email domain.",
+        description: "Please use your institutional @neu.edu.ph email domain.",
         variant: "destructive",
       });
       return;
@@ -93,13 +92,13 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Email Address</label>
                 <Input 
-                  placeholder="name@academia.edu" 
+                  placeholder="name@neu.edu.ph" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="h-12 text-lg"
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  Try "admin@academia.edu" or "visitor@academia.edu"
+                  Try "admin@neu.edu.ph" or "visitor@neu.edu.ph"
                 </p>
               </div>
               <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-lg font-medium">
@@ -117,11 +116,11 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("visitor@academia.edu")}>
+              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("visitor@neu.edu.ph")}>
                 <GraduationCap className="w-6 h-6" />
                 <span>Student</span>
               </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("admin@academia.edu")}>
+              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("admin@neu.edu.ph")}>
                 <Building2 className="w-6 h-6" />
                 <span>Faculty/Admin</span>
               </Button>

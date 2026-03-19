@@ -1,4 +1,3 @@
-
 "use client"
 
 import { User, UserRole, VisitRecord } from "./types";
@@ -7,22 +6,22 @@ import { useState, useEffect } from "react";
 // Initial mock data
 const MOCK_ADMIN: User = {
   id: "admin-1",
-  email: "admin@academia.edu",
+  email: "admin@neu.edu.ph",
   name: "Dr. Admin Professor",
   role: "Admin",
   isBlocked: false,
-  institutionEmail: "admin@academia.edu"
+  institutionEmail: "admin@neu.edu.ph"
 };
 
 const MOCK_USERS: User[] = [
   MOCK_ADMIN,
   {
     id: "user-1",
-    email: "visitor@academia.edu",
+    email: "visitor@neu.edu.ph",
     name: "John Doe Student",
     role: "Visitor",
     isBlocked: false,
-    institutionEmail: "visitor@academia.edu"
+    institutionEmail: "visitor@neu.edu.ph"
   }
 ];
 
@@ -31,7 +30,7 @@ const INITIAL_VISITS: VisitRecord[] = [
     id: "v1",
     visitorId: "user-1",
     visitorName: "John Doe Student",
-    visitorEmail: "visitor@academia.edu",
+    visitorEmail: "visitor@neu.edu.ph",
     department: "College of Engineering",
     reasonForVisit: "Research Project",
     timestamp: new Date().toISOString(),

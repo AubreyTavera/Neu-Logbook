@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react";
@@ -58,7 +57,7 @@ export default function CheckInPage() {
       checkIn({
         visitorId: currentUser?.id || "anon",
         visitorName: currentUser?.name || "Anonymous",
-        visitorEmail: currentUser?.email || "anon@academia.edu",
+        visitorEmail: currentUser?.email || "anon@neu.edu.ph",
         department: formData.department,
         reasonForVisit: formData.reason,
         location: formData.location,
