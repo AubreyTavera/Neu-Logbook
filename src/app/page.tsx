@@ -38,7 +38,6 @@ export default function LoginPage() {
 
     try {
       if (isAdminMode) {
-        // Real Firebase Auth for Admins/Faculty
         if (!password) {
           toast({
             title: "Password Required",
@@ -52,7 +51,6 @@ export default function LoginPage() {
         await signInWithEmailAndPassword(auth, email, password);
         router.push("/admin/dashboard");
       } else {
-        // Session-based login for visitors/students (Mock)
         const result = login(email);
         if (result.success) {
           router.push("/visitor/checkin");
@@ -77,7 +75,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background patterns */}
       <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-accent rounded-full blur-[100px]" />
         <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-primary rounded-full blur-[100px]" />
@@ -190,9 +187,18 @@ export default function LoginPage() {
             </div>
 
             {isAdminMode && (
-              <p className="text-center text-xs text-muted-foreground mt-4">
-                First time? <Button variant="link" className="p-0 h-auto text-xs" onClick={() => router.push('/admin/register')}>Register as Admin</Button>
-              </p>
+              <div className="text-center mt-6">
+                <Button 
+                  variant="outline" 
+                  className="w-full border-primary/20 hover:bg-primary/5 text-primary font-medium" 
+                  onClick={() => router.push('/register-admin')}
+                >
+                  Create Admin Account
+                </Button>
+                <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-tighter">
+                  New faculty member? Register for administrative access.
+                </p>
+              </div>
             )}
           </CardContent>
         </Card>
