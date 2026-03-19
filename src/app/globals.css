@@ -1,56 +1,46 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 95%;
-    --foreground: 240 18% 20%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 18% 20%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 18% 20%;
-    --primary: 240 18% 34%;
+    --background: 240 10% 8%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 240 5% 20%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 10% 90%;
-    --secondary-foreground: 240 18% 20%;
-    --muted: 240 10% 90%;
-    --muted-foreground: 240 10% 45%;
-    --accent: 201 61% 54%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 210 100% 50%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 85%;
-    --input: 240 10% 85%;
-    --ring: 201 61% 54%;
-    --chart-1: 240 18% 34%;
-    --chart-2: 201 61% 54%;
-    --chart-3: 201 40% 45%;
-    --chart-4: 240 10% 60%;
-    --chart-5: 240 5% 80%;
-    --radius: 0.75rem;
-  }
-  .dark {
-    --background: 240 18% 10%;
-    --foreground: 0 0% 98%;
-    --card: 240 18% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 18% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 18% 20%;
-    --secondary: 240 18% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 18% 15%;
-    --muted-foreground: 240 10% 65%;
-    --accent: 201 61% 54%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 18% 20%;
-    --input: 240 18% 20%;
-    --ring: 201 61% 54%;
+    --border: 240 5% 15%;
+    --input: 240 5% 15%;
+    --ring: 210 100% 50%;
+    --radius: 1rem;
+    
+    /* Charts */
+    --chart-1: 210 100% 50%;
+    --chart-2: 240 5% 30%;
+    --chart-3: 240 5% 45%;
+    --chart-4: 240 5% 60%;
+    --chart-5: 240 5% 75%;
+
+    /* Sidebar specific */
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 240 5% 85%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 5% 15%;
+    --sidebar-accent-foreground: 240 5% 95%;
+    --sidebar-border: 240 5% 15%;
+    --sidebar-ring: 210 100% 50%;
   }
 }
 
@@ -59,9 +49,20 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tight;
   }
+}
+
+/* Custom Scrollbar for Dark Theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full hover:bg-muted-foreground/30 transition-colors;
 }
