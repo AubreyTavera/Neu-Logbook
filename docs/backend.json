@@ -1,16 +1,16 @@
 
 {
   "entities": {
-    "AdminProfile": {
-      "title": "AdminProfile",
-      "description": "Profile information for system administrators.",
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Core profile information for all institutional users.",
       "type": "object",
       "properties": {
         "uid": { "type": "string", "description": "The unique Firebase Auth UID." },
-        "email": { "type": "string", "format": "email", "description": "Institutional email address." },
-        "name": { "type": "string", "description": "Full name of the administrator." },
-        "role": { "type": "string", "enum": ["Admin"], "description": "User role." },
-        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of account creation." }
+        "email": { "type": "string", "format": "email", "description": "Institutional email address (@neu.edu.ph)." },
+        "name": { "type": "string", "description": "Full name of the user." },
+        "role": { "type": "string", "enum": ["admin", "visitor"], "description": "System access level." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of profile creation." }
       },
       "required": ["uid", "email", "name", "role", "createdAt"]
     }
@@ -19,9 +19,9 @@
     "providers": ["password"]
   },
   "firestore": {
-    "/admins/{adminId}": {
-      "schema": "AdminProfile",
-      "description": "Collection of administrator profiles."
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Central collection for all registered institutional users."
     }
   }
 }

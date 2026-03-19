@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,54 +31,57 @@ export default function AdminRegisterPage() {
     e.preventDefault();
     setError(null);
 
+    // Strict Institutional Domain Check
     if (!email.endsWith('@neu.edu.ph')) {
-      setError('Only institutional @neu.edu.ph emails are allowed.');
+      setError('Only institutional @neu.edu.ph emails are permitted for administration.');
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters for administrative security.');
       return;
     }
 
     setLoading(true);
 
     try {
-      if (!auth || !db) throw new Error('Firebase services not initialized');
+      if (!auth || !db) throw new Error('Firebase services are unavailable.');
 
+      // 1. Create User in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      const adminData = {
+      // 2. Prepare Profile Data
+      const profileData = {
         uid: user.uid,
         email: user.email,
         name: name,
-        role: 'Admin',
+        role: 'admin', // Assigned as admin explicitly
         createdAt: new Date().toISOString(),
       };
 
-      const docRef = doc(db, 'admins', user.uid);
+      // 3. Initialize Profile in 'users' collection
+      const docRef = doc(db, 'users', user.uid);
       
-      // We don't await the Firestore write directly to benefit from optimistic updates,
-      // but we handle the error via catch for security rules feedback.
-      setDoc(docRef, adminData)
+      setDoc(docRef, profileData)
         .catch(async (err) => {
           const permissionError = new FirestorePermissionError({
             path: docRef.path,
             operation: 'create',
-            requestResourceData: adminData,
+            requestResourceData: profileData,
           });
           errorEmitter.emit('permission-error', permissionError);
         });
 
       toast({
-        title: 'Admin Created',
-        description: 'Institutional admin profile initialized successfully.',
+        title: 'Admin Account Created',
+        description: `Welcome, ${name}. Your administrative profile has been initialized.`,
       });
 
+      // Redirect to dashboard
       router.push('/admin/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to create admin account.');
+      setError(err.message || 'An unexpected error occurred during registration.');
     } finally {
       setLoading(false);
     }
@@ -91,15 +94,15 @@ export default function AdminRegisterPage() {
           <div className="bg-primary p-4 rounded-2xl shadow-xl">
             <ShieldCheck className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-headline font-extrabold text-primary">Admin Gateway</h1>
-          <p className="text-muted-foreground">Register a new institutional administrator account.</p>
+          <h1 className="text-3xl font-headline font-extrabold text-primary">Admin Registration</h1>
+          <p className="text-muted-foreground">Establish a new institutional administrator account.</p>
         </div>
 
         <Card className="shadow-xl border-none">
           <CardHeader>
-            <CardTitle>Create Admin Account</CardTitle>
+            <CardTitle>Create Profile</CardTitle>
             <CardDescription>
-              Verify your identity with your @neu.edu.ph credentials.
+              Provide your institutional credentials to gain access.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -107,7 +110,7 @@ export default function AdminRegisterPage() {
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Registration Error</AlertTitle>
+                  <AlertTitle>Registration Denied</AlertTitle>
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
@@ -115,7 +118,7 @@ export default function AdminRegisterPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Full Name</label>
                 <Input 
-                  placeholder="Prof. John Doe" 
+                  placeholder="e.g. Dr. Jane Smith" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -123,10 +126,10 @@ export default function AdminRegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Institutional Email</label>
+                <label className="text-sm font-medium">NEU Email Address</label>
                 <Input 
                   type="email"
-                  placeholder="admin.name@neu.edu.ph" 
+                  placeholder="name@neu.edu.ph" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -134,10 +137,10 @@ export default function AdminRegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Password</label>
+                <label className="text-sm font-medium">Secure Password</label>
                 <Input 
                   type="password"
-                  placeholder="••••••••" 
+                  placeholder="Minimum 8 characters" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -148,18 +151,18 @@ export default function AdminRegisterPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Initializing Profile...
+                    Creating Profile...
                   </>
                 ) : (
-                  'Complete Registration'
+                  'Register Administrator'
                 )}
               </Button>
             </form>
           </CardContent>
         </Card>
         
-        <p className="text-center text-xs text-muted-foreground">
-          Unauthorized access attempts are logged and monitored by the institutional security team.
+        <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest">
+          Institutional Security Protocol Active
         </p>
       </div>
     </div>
