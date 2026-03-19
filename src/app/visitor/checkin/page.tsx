@@ -81,7 +81,7 @@ export default function CheckInPage() {
       setSubmitted(true);
       toast({
         title: "Check-in Successful!",
-        description: "Welcome to Academia Access.",
+        description: "Your visit has been recorded at New Era University.",
       });
     }, 1000);
   };
@@ -95,16 +95,16 @@ export default function CheckInPage() {
               <CheckCircle2 className="w-16 h-16 text-green-600 animate-bounce" />
             </div>
           </div>
-          <h2 className="text-3xl font-headline font-bold text-primary mb-2">Welcome!</h2>
+          <h2 className="text-3xl font-headline font-bold text-primary mb-2">Success!</h2>
           <p className="text-muted-foreground mb-8 text-lg">
-            Your check-in at the <strong>{formData.location}</strong> has been recorded successfully.
+            Your check-in at the <strong>{formData.location}</strong> has been recorded. Welcome to New Era University.
           </p>
           <div className="space-y-3">
             <Button className="w-full bg-primary" onClick={() => setSubmitted(false)}>
               Make Another Check-in
             </Button>
             <p className="text-xs text-muted-foreground">
-              Please observe quietness and institutional rules.
+              Please observe institutional rules and maintain quietness.
             </p>
           </div>
         </div>
@@ -115,8 +115,8 @@ export default function CheckInPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-headline font-bold text-primary">Visitor Check-in</h1>
-        <p className="text-muted-foreground">Welcome, {currentUser?.name}. Please log your visit details below.</p>
+        <h1 className="text-3xl font-headline font-bold text-primary">NEU Check-in</h1>
+        <p className="text-muted-foreground">Welcome, {currentUser?.name}. Please log your visit to the university facilities.</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
@@ -124,7 +124,7 @@ export default function CheckInPage() {
           <Card className="border-none shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl">Visit Details</CardTitle>
-              <CardDescription>Information collected for institutional statistics.</CardDescription>
+              <CardDescription>All information is handled according to university privacy standards.</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -143,7 +143,7 @@ export default function CheckInPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Facility</label>
+                    <label className="text-sm font-medium">Target Facility</label>
                     <Select defaultValue="Library" onValueChange={(val: any) => setFormData({...formData, location: val})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Facility" />
@@ -158,7 +158,7 @@ export default function CheckInPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Department / College</label>
+                    <label className="text-sm font-medium">Institutional Department</label>
                     <Select onValueChange={(val) => setFormData({...formData, department: val})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Department" />
@@ -187,11 +187,11 @@ export default function CheckInPage() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Additional Notes (Optional)</label>
-                  <Textarea placeholder="Briefly describe your purpose..." />
+                  <Textarea placeholder="Provide more context for your visit..." />
                 </div>
 
                 <Button type="submit" className="w-full bg-accent hover:bg-accent/90 py-6 text-lg" disabled={loading}>
-                  {loading ? "Checking you in..." : "Submit Check-in"}
+                  {loading ? "Recording check-in..." : "Submit Logbook Entry"}
                 </Button>
               </form>
             </CardContent>
@@ -203,12 +203,12 @@ export default function CheckInPage() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-3">
                 <Library className="w-5 h-5" />
-                <h3 className="font-bold">Library Guidelines</h3>
+                <h3 className="font-bold">Institutional Guidelines</h3>
               </div>
               <ul className="text-sm space-y-2 opacity-80">
-                <li className="flex gap-2"><span>•</span> Silence must be maintained.</li>
-                <li className="flex gap-2"><span>•</span> No food inside the premises.</li>
-                <li className="flex gap-2"><span>•</span> Secure your belongings.</li>
+                <li className="flex gap-2"><span>•</span> Proper dress code must be followed.</li>
+                <li className="flex gap-2"><span>•</span> Maintain institutional order.</li>
+                <li className="flex gap-2"><span>•</span> Secure your belongings at all times.</li>
               </ul>
             </CardContent>
           </Card>
@@ -217,7 +217,7 @@ export default function CheckInPage() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-3 text-primary">
                 <Clock className="w-5 h-5" />
-                <h3 className="font-bold">Operating Hours</h3>
+                <h3 className="font-bold">Campus Hours</h3>
               </div>
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">

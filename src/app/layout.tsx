@@ -1,12 +1,11 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase/client-provider";
 
 export const metadata: Metadata = {
-  title: 'Academia Access | Institutional Visitor Management',
-  description: 'A professional visitor management system for academic institutions.',
+  title: 'NEU Visitor Management | New Era University',
+  description: 'Official visitor management system for New Era University facilities.',
 };
 
 export default function RootLayout({

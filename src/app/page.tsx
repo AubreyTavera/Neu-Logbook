@@ -73,15 +73,15 @@ export default function LoginPage() {
                 priority
               />
             </div>
-            <h1 className="text-3xl font-headline font-extrabold text-primary">Academia Access</h1>
+            <h1 className="text-3xl font-headline font-extrabold text-primary">NEU Logbook</h1>
           </div>
           
           <div className="space-y-4">
             <h2 className="text-4xl font-headline font-bold leading-tight">
-              Secure Campus Visitor <span className="text-accent">Management</span>
+              NEU Visitor <span className="text-accent">Management</span>
             </h2>
             <p className="text-muted-foreground text-lg">
-              Streamlining facility usage and professional logbooks for institutional excellence.
+              Official institutional digital check-in for New Era University students, faculty, and staff.
             </p>
           </div>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
             </CardTitle>
             <CardDescription>
               {isAdminMode 
-                ? "Enter your institutional email for administrative access." 
+                ? "Verify your institutional credentials for administrative access." 
                 : "Sign in with your university email (@neu.edu.ph)"}
             </CardDescription>
           </CardHeader>
@@ -157,7 +157,7 @@ export default function LoginPage() {
               </Button>
             </div>
 
-            <p className="text-[10px] text-center text-muted-foreground mt-4 uppercase tracking-widest">
+            <p className="text-center text-[10px] text-muted-foreground mt-4 uppercase tracking-widest">
               Institutional Security Protocol Active
             </p>
           </CardContent>

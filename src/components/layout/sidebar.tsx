@@ -52,7 +52,7 @@ export function AppSidebar() {
             className="object-contain"
           />
         </div>
-        <h1 className="text-xl font-headline font-bold">Academia Access</h1>
+        <h1 className="text-xl font-headline font-bold">NEU Logbook</h1>
       </div>
 
       <nav className="flex-1 space-y-1">
