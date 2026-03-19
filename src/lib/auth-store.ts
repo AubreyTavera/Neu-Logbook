@@ -7,12 +7,12 @@ import { useState, useEffect } from "react";
 // Initial mock data
 const MOCK_ADMIN: User = {
   id: "admin-1",
-  email: "admin@neu.edu.ph",
-  name: "Dr. Admin Professor",
-  role: "Admin",
+  email: "jcesperanza@neu.edu.ph",
+  name: "JC Esperanza",
+  role: "admin",
   userType: "Staff",
   isBlocked: false,
-  institutionEmail: "admin@neu.edu.ph"
+  institutionEmail: "jcesperanza@neu.edu.ph"
 };
 
 const MOCK_USERS: User[] = [
@@ -21,7 +21,7 @@ const MOCK_USERS: User[] = [
     id: "user-1",
     email: "visitor@neu.edu.ph",
     name: "John Doe Student",
-    role: "Visitor",
+    role: "visitor",
     userType: "Student",
     isBlocked: false,
     institutionEmail: "visitor@neu.edu.ph"
@@ -65,28 +65,30 @@ export function useAuthStore() {
   }, []);
 
   const login = (email: string) => {
+    const normalizedEmail = email.toLowerCase();
+    
     // Check if user already exists
-    let user = globalUsers.find(u => u.email === email);
+    let user = globalUsers.find(u => u.email.toLowerCase() === normalizedEmail);
     
     // If user doesn't exist but has the right domain, auto-register them
-    if (!user && email.endsWith("@neu.edu.ph")) {
-      const namePrefix = email.split('@')[0];
+    if (!user && normalizedEmail.endsWith("@neu.edu.ph")) {
+      const namePrefix = normalizedEmail.split('@')[0];
       const formattedName = namePrefix
         .split(/[._-]/)
         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
         .join(' ');
 
-      // Designate anything starting with "admin" or "dean" as Admin role
-      const isAdmin = email.startsWith("admin") || email.startsWith("dean");
+      // RBAC Rule: Only jcesperanza@neu.edu.ph is Admin by default
+      const isAdmin = normalizedEmail === "jcesperanza@neu.edu.ph";
 
       user = {
         id: `u-${Date.now()}`,
-        email: email,
+        email: normalizedEmail,
         name: formattedName || "New User",
-        role: isAdmin ? "Admin" : "Visitor",
+        role: isAdmin ? "admin" : "visitor",
         userType: isAdmin ? "Staff" : "Student",
         isBlocked: false,
-        institutionEmail: email
+        institutionEmail: normalizedEmail
       };
       globalUsers = [...globalUsers, user];
     }

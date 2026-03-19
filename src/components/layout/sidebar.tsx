@@ -32,7 +32,7 @@ export function AppSidebar() {
   const router = useRouter();
   const { currentUser, logout } = useAuthStore();
 
-  const navItems = currentUser?.role === 'Admin' ? ADMIN_NAV : VISITOR_NAV;
+  const navItems = currentUser?.role === 'admin' ? ADMIN_NAV : VISITOR_NAV;
 
   const handleLogout = () => {
     logout();
@@ -71,11 +71,11 @@ export function AppSidebar() {
       <div className="pt-4 border-t border-white/10 mt-auto">
         <div className="flex items-center gap-3 px-4 py-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center font-bold">
-            {currentUser?.name[0]}
+            {currentUser?.name ? currentUser.name[0] : "U"}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{currentUser?.name}</p>
-            <p className="text-xs text-primary-foreground/60 truncate">{currentUser?.role}</p>
+            <p className="text-xs text-primary-foreground/60 truncate uppercase">{currentUser?.role}</p>
           </div>
         </div>
         <Button 
