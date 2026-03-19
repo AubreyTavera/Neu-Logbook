@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react";
@@ -20,7 +21,7 @@ export default function LoginPage() {
     if (!email.endsWith("@neu.edu.ph")) {
       toast({
         title: "Access Restricted",
-        description: "Please use your institutional @neu.edu.ph email domain.",
+        description: "Please use your institutional @neu.edu.ph email address.",
         variant: "destructive",
       });
       return;
@@ -84,25 +85,25 @@ export default function LoginPage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-headline">Institutional Login</CardTitle>
             <CardDescription>
-              Sign in with your university Google account
+              Sign in with your university Google account (@neu.edu.ph)
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Email Address</label>
+                <label className="text-sm font-medium">Institutional Email</label>
                 <Input 
-                  placeholder="name@neu.edu.ph" 
+                  placeholder="your.name@neu.edu.ph" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="h-12 text-lg"
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  Try "admin@neu.edu.ph" or "visitor@neu.edu.ph"
+                  Access is granted to all verified institutional accounts.
                 </p>
               </div>
               <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-lg font-medium">
-                Continue with Google
+                Continue
               </Button>
             </form>
 
@@ -111,12 +112,12 @@ export default function LoginPage() {
                 <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or access as</span>
+                <span className="bg-card px-2 text-muted-foreground">Role Presets (Mock)</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("visitor@neu.edu.ph")}>
+              <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setEmail("student.one@neu.edu.ph")}>
                 <GraduationCap className="w-6 h-6" />
                 <span>Student</span>
               </Button>

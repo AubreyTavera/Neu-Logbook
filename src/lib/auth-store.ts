@@ -1,6 +1,7 @@
+
 "use client"
 
-import { User, UserRole, VisitRecord } from "./types";
+import { User, VisitRecord } from "./types";
 import { useState, useEffect } from "react";
 
 // Initial mock data
@@ -41,23 +42,63 @@ const INITIAL_VISITS: VisitRecord[] = [
   }
 ];
 
-export function useAuthStore() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
-  const [visits, setVisits] = useState<VisitRecord[]>(INITIAL_VISITS);
+// Module-level state to persist across hook instances for this session
+let globalUsers: User[] = [...MOCK_USERS];
+let globalVisits: VisitRecord[] = [...INITIAL_VISITS];
+let globalCurrentUser: User | null = null;
+const listeners: Set<() => void> = new Set();
 
-  // Sync with local storage if needed or just use memory for this demo
+const notify = () => listeners.forEach(l => l());
+
+export function useAuthStore() {
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    const forceUpdate = () => setTick(t => t + 1);
+    listeners.add(forceUpdate);
+    return () => {
+      listeners.delete(forceUpdate);
+    };
+  }, []);
+
   const login = (email: string) => {
-    const user = users.find(u => u.email === email);
+    // Check if user already exists
+    let user = globalUsers.find(u => u.email === email);
+    
+    // If user doesn't exist but has the right domain, auto-register them
+    if (!user && email.endsWith("@neu.edu.ph")) {
+      const namePrefix = email.split('@')[0];
+      // Simple name formatter: john.doe -> John Doe
+      const formattedName = namePrefix
+        .split(/[._-]/)
+        .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(' ');
+
+      user = {
+        id: `u-${Date.now()}`,
+        email: email,
+        name: formattedName || "New Student",
+        role: email.startsWith("admin") ? "Admin" : "Visitor",
+        isBlocked: false,
+        institutionEmail: email
+      };
+      globalUsers = [...globalUsers, user];
+    }
+
     if (user) {
       if (user.isBlocked) return { error: "Your account is blocked." };
-      setCurrentUser(user);
+      globalCurrentUser = user;
+      notify();
       return { success: true };
     }
-    return { error: "User not found or invalid institutional email." };
+    
+    return { error: "Invalid institutional email domain." };
   };
 
-  const logout = () => setCurrentUser(null);
+  const logout = () => {
+    globalCurrentUser = null;
+    notify();
+  };
 
   const checkIn = (visit: Omit<VisitRecord, "id" | "timestamp" | "status" | "timeIn">) => {
     const newVisit: VisitRecord = {
@@ -67,18 +108,25 @@ export function useAuthStore() {
       status: "Waiting",
       timeIn: new Date().toISOString(),
     };
-    setVisits([newVisit, ...visits]);
+    globalVisits = [newVisit, ...globalVisits];
+    notify();
     return newVisit;
   };
 
   const toggleBlockUser = (userId: string) => {
-    setUsers(users.map(u => u.id === userId ? { ...u, isBlocked: !u.isBlocked } : u));
+    globalUsers = globalUsers.map(u => u.id === userId ? { ...u, isBlocked: !u.isBlocked } : u);
+    notify();
+  };
+
+  const setVisits = (newVisits: VisitRecord[]) => {
+    globalVisits = newVisits;
+    notify();
   };
 
   return {
-    currentUser,
-    users,
-    visits,
+    currentUser: globalCurrentUser,
+    users: globalUsers,
+    visits: globalVisits,
     login,
     logout,
     checkIn,
