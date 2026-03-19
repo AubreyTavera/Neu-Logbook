@@ -9,7 +9,8 @@ import {
   LogOut,
   ChevronRight,
   ShieldCheck,
-  Library
+  Library,
+  Activity
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ import { useAuthStore } from "@/lib/auth-store";
 
 const ADMIN_NAV = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { name: "Active Sessions", href: "/admin/sessions", icon: Activity },
   { name: "User Management", href: "/admin/users", icon: Users },
   { name: "Visit Logs", href: "/admin/history", icon: History },
   { name: "AI Insights", href: "/admin/reports", icon: FileBarChart },

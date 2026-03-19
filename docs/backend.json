@@ -13,6 +13,20 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of profile creation." }
       },
       "required": ["uid", "email", "name", "role", "createdAt"]
+    },
+    "UserSession": {
+      "title": "UserSession",
+      "description": "Represents an active user session in the system.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "loginTime": { "type": "string", "format": "date-time" },
+        "userAgent": { "type": "string" }
+      },
+      "required": ["uid", "email", "name", "role", "loginTime"]
     }
   },
   "auth": {
@@ -22,6 +36,10 @@
     "/users/{userId}": {
       "schema": "UserProfile",
       "description": "Central collection for all registered institutional users."
+    },
+    "/sessions/{sessionId}": {
+      "schema": "UserSession",
+      "description": "Active user sessions for real-time monitoring."
     }
   }
 }

@@ -3,6 +3,10 @@
 
 import { User, VisitRecord, UserType } from "./types";
 import { useState, useEffect } from "react";
+import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 // Initial mock data
 const MOCK_ADMIN: User = {
@@ -78,7 +82,7 @@ export function useAuthStore() {
         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
         .join(' ');
 
-      // RBAC Rule: Only jcesperanza@neu.edu.ph is Admin by default
+      // RBAC Rule: Specific email for Admin
       const isAdmin = normalizedEmail === "jcesperanza@neu.edu.ph";
 
       user = {
@@ -96,6 +100,28 @@ export function useAuthStore() {
     if (user) {
       if (user.isBlocked) return { error: "Your account is blocked." };
       globalCurrentUser = user;
+
+      // Track session in Firestore
+      const sessionRef = doc(db, 'sessions', user.id);
+      const sessionData = {
+        uid: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        loginTime: new Date().toISOString(),
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
+      };
+
+      setDoc(sessionRef, sessionData)
+        .catch(async () => {
+          const permissionError = new FirestorePermissionError({
+            path: sessionRef.path,
+            operation: 'write',
+            requestResourceData: sessionData,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        });
+
       notify();
       return { success: true };
     }
@@ -104,6 +130,17 @@ export function useAuthStore() {
   };
 
   const logout = () => {
+    if (globalCurrentUser) {
+      const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
+      deleteDoc(sessionRef)
+        .catch(async () => {
+          const permissionError = new FirestorePermissionError({
+            path: sessionRef.path,
+            operation: 'delete',
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        });
+    }
     globalCurrentUser = null;
     notify();
   };

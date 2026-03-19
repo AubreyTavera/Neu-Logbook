@@ -12,6 +12,16 @@ export interface User {
   institutionEmail: string;
 }
 
+export interface UserSession {
+  id: string;
+  uid: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  loginTime: string;
+  userAgent: string;
+}
+
 export interface VisitRecord {
   id: string;
   visitorId: string;
