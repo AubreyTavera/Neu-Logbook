@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -62,18 +61,17 @@ export default function LoginPage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#060608] flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
       {/* Immersive Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[160px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[140px]" />
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[160px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[140px]" />
       </div>
 
       <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-16 items-center z-10">
         <div className="space-y-10">
           <div className="flex items-center gap-5">
-            <div className="bg-card/40 p-4 rounded-3xl shadow-2xl border border-white/10 backdrop-blur-md">
+            <div className="bg-white p-4 rounded-3xl shadow-xl border border-border backdrop-blur-md">
               <Image 
                 src="https://upload.wikimedia.org/wikipedia/en/c/c6/New_Era_University.svg" 
                 alt="NEU Logo"
@@ -84,7 +82,7 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <h1 className="text-5xl font-black tracking-tighter text-white leading-none">NEU LOGBOOK</h1>
+              <h1 className="text-5xl font-black tracking-tighter text-foreground leading-none">NEU LOGBOOK</h1>
               <div className="flex items-center gap-2 mt-2">
                 <span className="h-1 w-8 bg-primary rounded-full" />
                 <p className="text-primary font-bold tracking-[0.3em] text-[10px] uppercase">Digital Entry Gateway</p>
@@ -93,9 +91,9 @@ export default function LoginPage() {
           </div>
           
           <div className="space-y-6">
-            <h2 className="text-6xl xl:text-7xl font-black leading-[0.95] text-white tracking-tighter">
+            <h2 className="text-6xl xl:text-7xl font-black leading-[0.95] text-foreground tracking-tighter">
               Institutional <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-400">Excellence.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">Excellence.</span>
             </h2>
             <p className="text-muted-foreground text-xl max-w-md leading-relaxed font-medium">
               The official visitor verification and real-time activity management portal for New Era University.
@@ -103,22 +101,22 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-3 text-xs font-bold text-white bg-white/5 px-6 py-3 rounded-2xl border border-white/5 backdrop-blur-sm">
+            <div className="flex items-center gap-3 text-xs font-bold text-foreground bg-white/50 px-6 py-3 rounded-2xl border border-border backdrop-blur-sm shadow-sm">
               <ShieldCheck className="w-4 h-4 text-primary" />
               SSO SECURED
             </div>
-            <div className="flex items-center gap-3 text-xs font-bold text-white bg-white/5 px-6 py-3 rounded-2xl border border-white/5 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+            <div className="flex items-center gap-3 text-xs font-bold text-foreground bg-white/50 px-6 py-3 rounded-2xl border border-border backdrop-blur-sm shadow-sm">
+              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
               LIVE LOGGING
             </div>
           </div>
         </div>
 
-        <Card className="glass-card rounded-[3rem] border-white/10 overflow-hidden relative group">
+        <Card className="glass-card rounded-[3rem] border-border overflow-hidden relative group">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
           <CardHeader className="space-y-3 p-12 pb-6">
-            <CardTitle className="text-4xl font-black text-white">Identity Access</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">Identity Access</CardTitle>
             <CardDescription className="text-muted-foreground text-lg">
               Select your role to authenticate with the university system.
             </CardDescription>
@@ -131,13 +129,13 @@ export default function LoginPage() {
                 className={cn(
                   "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
                   !isAdminMode 
-                    ? "bg-primary border-primary text-white shadow-[0_20px_40px_rgba(59,130,246,0.3)] scale-105" 
-                    : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
+                    ? "bg-primary border-primary text-primary-foreground shadow-lg scale-105" 
+                    : "bg-background border-border text-muted-foreground hover:bg-white hover:border-primary/30"
                 )}
               >
                 <div className={cn(
                   "p-4 rounded-2xl transition-colors",
-                  !isAdminMode ? "bg-white/20" : "bg-white/5"
+                  !isAdminMode ? "bg-white/30" : "bg-muted"
                 )}>
                   <GraduationCap className="w-8 h-8" />
                 </div>
@@ -149,13 +147,13 @@ export default function LoginPage() {
                 className={cn(
                   "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
                   isAdminMode 
-                    ? "bg-primary border-primary text-white shadow-[0_20px_40px_rgba(59,130,246,0.3)] scale-105" 
-                    : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
+                    ? "bg-primary border-primary text-primary-foreground shadow-lg scale-105" 
+                    : "bg-background border-border text-muted-foreground hover:bg-white hover:border-primary/30"
                 )}
               >
                 <div className={cn(
                   "p-4 rounded-2xl transition-colors",
-                  isAdminMode ? "bg-white/20" : "bg-white/5"
+                  isAdminMode ? "bg-white/30" : "bg-muted"
                 )}>
                   <Building2 className="w-8 h-8" />
                 </div>
@@ -174,13 +172,13 @@ export default function LoginPage() {
                     placeholder="name@neu.edu.ph" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-16 pl-14 bg-white/5 border-white/10 focus:border-primary/50 focus:ring-primary/20 text-lg rounded-2xl transition-all"
+                    className="h-16 pl-14 bg-background border-border focus:border-primary/50 focus:ring-primary/20 text-lg rounded-2xl transition-all"
                     required
                   />
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-white text-lg font-black rounded-2xl shadow-2xl transition-all group active:scale-95" disabled={loading}>
+              <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-black rounded-2xl shadow-xl transition-all group active:scale-95" disabled={loading}>
                 {loading ? (
                   <Loader2 className="w-6 h-6 animate-spin" />
                 ) : (
@@ -192,11 +190,11 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="pt-8 border-t border-white/5 flex flex-col items-center gap-4">
+            <div className="pt-8 border-t border-border flex flex-col items-center gap-4">
               <p className="text-[10px] text-muted-foreground uppercase tracking-[0.4em] font-black">
                 Official NEU Security Protocol
               </p>
-              <Button variant="link" className="text-muted-foreground hover:text-white text-xs gap-2">
+              <Button variant="link" className="text-muted-foreground hover:text-primary text-xs gap-2">
                 Need Access Help? <ExternalLink className="w-3 h-3" />
               </Button>
             </div>
