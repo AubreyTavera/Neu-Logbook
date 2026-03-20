@@ -5,8 +5,6 @@ import { User, VisitRecord, UserType } from "./types";
 import { useState, useEffect } from "react";
 import { doc, setDoc, deleteDoc, getFirestore } from "firebase/firestore";
 import { app } from "@/firebase/config";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
 
 // Initial mock data
 const MOCK_ADMIN: User = {
@@ -70,13 +68,19 @@ export function useAuthStore() {
 
   const login = (email: string) => {
     try {
-      const normalizedEmail = email.toLowerCase();
+      if (!email) return { error: "Email is required." };
       
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      if (!normalizedEmail.endsWith("@neu.edu.ph")) {
+        return { error: "Only institutional @neu.edu.ph emails are permitted." };
+      }
+
       // Check if user already exists
       let user = globalUsers.find(u => u.email.toLowerCase() === normalizedEmail);
       
       // If user doesn't exist but has the right domain, auto-register them
-      if (!user && normalizedEmail.endsWith("@neu.edu.ph")) {
+      if (!user) {
         const namePrefix = normalizedEmail.split('@')[0];
         const formattedName = namePrefix
           .split(/[._-]/)
@@ -98,13 +102,14 @@ export function useAuthStore() {
         globalUsers = [...globalUsers, user];
       }
 
-      if (user) {
-        if (user.isBlocked) return { error: "Your account is blocked." };
-        globalCurrentUser = user;
+      if (user.isBlocked) return { error: "Your account is blocked." };
+      
+      globalCurrentUser = user;
 
-        // Track session in Firestore - non-blocking to prevent UI hangs on config errors
-        try {
-          const db = getFirestore(app);
+      // Track session in Firestore - wrapped in a safer try/catch to prevent crashes if Firebase is uninitialized
+      try {
+        const db = getFirestore(app);
+        if (db) {
           const sessionRef = doc(db, 'sessions', user.id);
           const sessionData = {
             uid: user.id,
@@ -115,22 +120,19 @@ export function useAuthStore() {
             userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
           };
 
-          setDoc(sessionRef, sessionData)
-            .catch((err) => {
-              console.warn("Session tracking failed, continuing login...", err);
-            });
-        } catch (e) {
-          console.warn("Firestore not available for session tracking", e);
+          setDoc(sessionRef, sessionData).catch(err => {
+            console.warn("Session tracking failed:", err);
+          });
         }
-
-        notify();
-        return { success: true, user };
+      } catch (e) {
+        console.warn("Firestore service unavailable for session tracking.");
       }
-      
-      return { error: "Invalid institutional email domain." };
+
+      notify();
+      return { success: true, user };
     } catch (err) {
       console.error("Login process error:", err);
-      return { error: "An unexpected error occurred during login." };
+      return { error: "An unexpected error occurred during identity verification." };
     }
   };
 
@@ -138,8 +140,10 @@ export function useAuthStore() {
     if (globalCurrentUser) {
       try {
         const db = getFirestore(app);
-        const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
-        deleteDoc(sessionRef).catch(() => {});
+        if (db) {
+          const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
+          deleteDoc(sessionRef).catch(() => {});
+        }
       } catch (e) {}
     }
     globalCurrentUser = null;

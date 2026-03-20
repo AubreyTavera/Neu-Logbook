@@ -31,55 +31,51 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (!email.endsWith("@neu.edu.ph")) {
-      toast({
-        title: "Restricted Access",
-        description: "Official @neu.edu.ph institutional email required.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
 
-    // Simulate verification delay
-    setTimeout(() => {
+    try {
       const result = login(email);
-      setLoading(false);
 
       if (result.success && result.user) {
-        // Role-Based Redirect Validation
+        // Validation for Admin mode
         if (isAdminMode) {
           if (result.user.role === 'admin') {
+            toast({
+              title: "Identity Authenticated",
+              description: `Welcome, Admin ${result.user.name}. Entering Command Center.`,
+            });
             router.push("/admin/dashboard");
           } else {
-            setError("Administrative privileges are required to enter Faculty mode.");
+            setLoading(false);
+            setError("Administrative privileges are required for Faculty access.");
             toast({
-              title: "Access Denied",
-              description: "You do not have administrative permissions.",
+              title: "Access Restricted",
+              description: "Your account does not have faculty/admin permissions.",
               variant: "destructive",
             });
           }
         } else {
+          toast({
+            title: "Identity Authenticated",
+            description: `Welcome, ${result.user.name}. Accessing Digital Logbook.`,
+          });
           router.push("/visitor/checkin");
         }
       } else {
-        setError(result.error || "Verification failed.");
-        toast({
-          title: "Verification Failed",
-          description: result.error,
-          variant: "destructive",
-        });
+        setLoading(false);
+        setError(result.error || "Verification failed. Please check your credentials.");
       }
-    }, 1200);
+    } catch (err: any) {
+      setLoading(false);
+      setError("A system error occurred during verification.");
+      console.error("Login component error:", err);
+    }
   };
 
   if (!mounted) return null;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Immersive Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[160px] animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[140px]" />
@@ -151,6 +147,7 @@ export default function LoginPage() {
 
             <div className="grid grid-cols-2 gap-5">
               <button 
+                type="button"
                 onClick={() => { setIsAdminMode(false); setError(null); }}
                 className={cn(
                   "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
@@ -169,6 +166,7 @@ export default function LoginPage() {
               </button>
               
               <button 
+                type="button"
                 onClick={() => { setIsAdminMode(true); setError(null); }}
                 className={cn(
                   "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
