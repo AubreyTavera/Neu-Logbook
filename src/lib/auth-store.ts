@@ -3,8 +3,8 @@
 
 import { User, VisitRecord, UserType } from "./types";
 import { useState, useEffect } from "react";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
-import { db } from "@/firebase/config";
+import { doc, setDoc, deleteDoc, getFirestore } from "firebase/firestore";
+import { app } from "@/firebase/config";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 
@@ -69,77 +69,78 @@ export function useAuthStore() {
   }, []);
 
   const login = (email: string) => {
-    const normalizedEmail = email.toLowerCase();
-    
-    // Check if user already exists
-    let user = globalUsers.find(u => u.email.toLowerCase() === normalizedEmail);
-    
-    // If user doesn't exist but has the right domain, auto-register them
-    if (!user && normalizedEmail.endsWith("@neu.edu.ph")) {
-      const namePrefix = normalizedEmail.split('@')[0];
-      const formattedName = namePrefix
-        .split(/[._-]/)
-        .map(s => s.charAt(0).toUpperCase() + s.slice(1))
-        .join(' ');
+    try {
+      const normalizedEmail = email.toLowerCase();
+      
+      // Check if user already exists
+      let user = globalUsers.find(u => u.email.toLowerCase() === normalizedEmail);
+      
+      // If user doesn't exist but has the right domain, auto-register them
+      if (!user && normalizedEmail.endsWith("@neu.edu.ph")) {
+        const namePrefix = normalizedEmail.split('@')[0];
+        const formattedName = namePrefix
+          .split(/[._-]/)
+          .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+          .join(' ');
 
-      // RBAC Rule: Specific email for Admin
-      const isAdmin = normalizedEmail === "jcesperanza@neu.edu.ph";
+        // RBAC Rule: Specific email for Admin
+        const isAdmin = normalizedEmail === "jcesperanza@neu.edu.ph";
 
-      user = {
-        id: `u-${Date.now()}`,
-        email: normalizedEmail,
-        name: formattedName || "New User",
-        role: isAdmin ? "admin" : "visitor",
-        userType: isAdmin ? "Staff" : "Student",
-        isBlocked: false,
-        institutionEmail: normalizedEmail
-      };
-      globalUsers = [...globalUsers, user];
+        user = {
+          id: `u-${Date.now()}`,
+          email: normalizedEmail,
+          name: formattedName || "New User",
+          role: isAdmin ? "admin" : "visitor",
+          userType: isAdmin ? "Staff" : "Student",
+          isBlocked: false,
+          institutionEmail: normalizedEmail
+        };
+        globalUsers = [...globalUsers, user];
+      }
+
+      if (user) {
+        if (user.isBlocked) return { error: "Your account is blocked." };
+        globalCurrentUser = user;
+
+        // Track session in Firestore - non-blocking to prevent UI hangs on config errors
+        try {
+          const db = getFirestore(app);
+          const sessionRef = doc(db, 'sessions', user.id);
+          const sessionData = {
+            uid: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            loginTime: new Date().toISOString(),
+            userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
+          };
+
+          setDoc(sessionRef, sessionData)
+            .catch((err) => {
+              console.warn("Session tracking failed, continuing login...", err);
+            });
+        } catch (e) {
+          console.warn("Firestore not available for session tracking", e);
+        }
+
+        notify();
+        return { success: true, user };
+      }
+      
+      return { error: "Invalid institutional email domain." };
+    } catch (err) {
+      console.error("Login process error:", err);
+      return { error: "An unexpected error occurred during login." };
     }
-
-    if (user) {
-      if (user.isBlocked) return { error: "Your account is blocked." };
-      globalCurrentUser = user;
-
-      // Track session in Firestore
-      const sessionRef = doc(db, 'sessions', user.id);
-      const sessionData = {
-        uid: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        loginTime: new Date().toISOString(),
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
-      };
-
-      setDoc(sessionRef, sessionData)
-        .catch(async () => {
-          const permissionError = new FirestorePermissionError({
-            path: sessionRef.path,
-            operation: 'write',
-            requestResourceData: sessionData,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
-
-      notify();
-      return { success: true };
-    }
-    
-    return { error: "Invalid institutional email domain." };
   };
 
   const logout = () => {
     if (globalCurrentUser) {
-      const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
-      deleteDoc(sessionRef)
-        .catch(async () => {
-          const permissionError = new FirestorePermissionError({
-            path: sessionRef.path,
-            operation: 'delete',
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
+      try {
+        const db = getFirestore(app);
+        const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
+        deleteDoc(sessionRef).catch(() => {});
+      } catch (e) {}
     }
     globalCurrentUser = null;
     notify();

@@ -1,21 +1,24 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { GraduationCap, Building2, Mail, Loader2, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
+import { GraduationCap, Building2, Mail, Loader2, ArrowRight, ShieldCheck, ExternalLink, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/lib/auth-store";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const router = useRouter();
   const { login } = useAuthStore();
@@ -27,6 +30,8 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     if (!email.endsWith("@neu.edu.ph")) {
       toast({
         title: "Restricted Access",
@@ -38,17 +43,29 @@ export default function LoginPage() {
 
     setLoading(true);
 
+    // Simulate verification delay
     setTimeout(() => {
       const result = login(email);
       setLoading(false);
 
-      if (result.success) {
+      if (result.success && result.user) {
+        // Role-Based Redirect Validation
         if (isAdminMode) {
-          router.push("/admin/dashboard");
+          if (result.user.role === 'admin') {
+            router.push("/admin/dashboard");
+          } else {
+            setError("Administrative privileges are required to enter Faculty mode.");
+            toast({
+              title: "Access Denied",
+              description: "You do not have administrative permissions.",
+              variant: "destructive",
+            });
+          }
         } else {
           router.push("/visitor/checkin");
         }
       } else {
+        setError(result.error || "Verification failed.");
         toast({
           title: "Verification Failed",
           description: result.error,
@@ -123,9 +140,18 @@ export default function LoginPage() {
           </CardHeader>
           
           <CardContent className="p-12 pt-0 space-y-10">
+            {error && (
+              <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl p-6">
+                <AlertCircle className="h-5 w-5" />
+                <AlertDescription className="font-bold ml-2">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="grid grid-cols-2 gap-5">
               <button 
-                onClick={() => setIsAdminMode(false)}
+                onClick={() => { setIsAdminMode(false); setError(null); }}
                 className={cn(
                   "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
                   !isAdminMode 
@@ -143,7 +169,7 @@ export default function LoginPage() {
               </button>
               
               <button 
-                onClick={() => setIsAdminMode(true)}
+                onClick={() => { setIsAdminMode(true); setError(null); }}
                 className={cn(
                   "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
                   isAdminMode 
@@ -171,7 +197,7 @@ export default function LoginPage() {
                   <Input 
                     placeholder="name@neu.edu.ph" 
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => { setEmail(e.target.value); setError(null); }}
                     className="h-16 pl-14 bg-white/5 border-white/10 focus:border-primary/50 focus:ring-primary/20 text-lg rounded-2xl transition-all"
                     required
                   />
