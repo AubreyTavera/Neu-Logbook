@@ -3,8 +3,8 @@
 
 import { User, VisitRecord, UserType } from "./types";
 import { useState, useEffect } from "react";
-import { doc, setDoc, deleteDoc, getFirestore } from "firebase/firestore";
-import { app } from "@/firebase/config";
+import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 // Initial mock data
 const MOCK_ADMIN: User = {
@@ -47,13 +47,17 @@ const INITIAL_VISITS: VisitRecord[] = [
   }
 ];
 
-// Module-level state to persist across hook instances for this session
+// Module-level state to persist across hook instances
 let globalUsers: User[] = [...MOCK_USERS];
 let globalVisits: VisitRecord[] = [...INITIAL_VISITS];
 let globalCurrentUser: User | null = null;
 const listeners: Set<() => void> = new Set();
 
-const notify = () => listeners.forEach(l => l());
+const notify = () => {
+  if (typeof window !== 'undefined') {
+    listeners.forEach(l => l());
+  }
+};
 
 export function useAuthStore() {
   const [, setTick] = useState(0);
@@ -68,18 +72,18 @@ export function useAuthStore() {
 
   const login = (email: string) => {
     try {
-      if (!email) return { error: "Email is required." };
+      if (!email) return { error: "Institutional email is required." };
       
       const normalizedEmail = email.toLowerCase().trim();
       
       if (!normalizedEmail.endsWith("@neu.edu.ph")) {
-        return { error: "Only institutional @neu.edu.ph emails are permitted." };
+        return { error: "Access denied. Only @neu.edu.ph emails are permitted." };
       }
 
       // Check if user already exists
       let user = globalUsers.find(u => u.email.toLowerCase() === normalizedEmail);
       
-      // If user doesn't exist but has the right domain, auto-register them
+      // Auto-registration for institutional emails
       if (!user) {
         const namePrefix = normalizedEmail.split('@')[0];
         const formattedName = namePrefix
@@ -87,7 +91,6 @@ export function useAuthStore() {
           .map(s => s.charAt(0).toUpperCase() + s.slice(1))
           .join(' ');
 
-        // RBAC Rule: Specific email for Admin
         const isAdmin = normalizedEmail === "jcesperanza@neu.edu.ph";
 
         user = {
@@ -102,49 +105,38 @@ export function useAuthStore() {
         globalUsers = [...globalUsers, user];
       }
 
-      if (user.isBlocked) return { error: "Your account is blocked." };
+      if (user.isBlocked) return { error: "Account suspended. Contact administration." };
       
       globalCurrentUser = user;
 
-      // Track session in Firestore - wrapped in a safer try/catch to prevent crashes if Firebase is uninitialized
-      try {
-        const db = getFirestore(app);
-        if (db) {
-          const sessionRef = doc(db, 'sessions', user.id);
-          const sessionData = {
-            uid: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            loginTime: new Date().toISOString(),
-            userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
-          };
+      // Asynchronous session tracking (non-blocking)
+      if (db) {
+        const sessionRef = doc(db, 'sessions', user.id);
+        const sessionData = {
+          uid: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          loginTime: new Date().toISOString(),
+          userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
+        };
 
-          setDoc(sessionRef, sessionData).catch(err => {
-            console.warn("Session tracking failed:", err);
-          });
-        }
-      } catch (e) {
-        console.warn("Firestore service unavailable for session tracking.");
+        setDoc(sessionRef, sessionData).catch(() => {
+          // Silent fail for session tracking to avoid blocking login
+        });
       }
 
       notify();
       return { success: true, user };
     } catch (err) {
-      console.error("Login process error:", err);
-      return { error: "An unexpected error occurred during identity verification." };
+      return { error: "System verification error. Please try again." };
     }
   };
 
   const logout = () => {
-    if (globalCurrentUser) {
-      try {
-        const db = getFirestore(app);
-        if (db) {
-          const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
-          deleteDoc(sessionRef).catch(() => {});
-        }
-      } catch (e) {}
+    if (globalCurrentUser && db) {
+      const sessionRef = doc(db, 'sessions', globalCurrentUser.id);
+      deleteDoc(sessionRef).catch(() => {});
     }
     globalCurrentUser = null;
     notify();
@@ -168,11 +160,6 @@ export function useAuthStore() {
     notify();
   };
 
-  const setVisits = (newVisits: VisitRecord[]) => {
-    globalVisits = newVisits;
-    notify();
-  };
-
   return {
     currentUser: globalCurrentUser,
     users: globalUsers,
@@ -181,6 +168,5 @@ export function useAuthStore() {
     logout,
     checkIn,
     toggleBlockUser,
-    setVisits
   };
 }

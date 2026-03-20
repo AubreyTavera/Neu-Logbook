@@ -33,43 +33,39 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    try {
+    // Short delay to simulate institutional verification
+    setTimeout(() => {
       const result = login(email);
 
       if (result.success && result.user) {
-        // Validation for Admin mode
         if (isAdminMode) {
           if (result.user.role === 'admin') {
             toast({
-              title: "Identity Authenticated",
-              description: `Welcome, Admin ${result.user.name}. Entering Command Center.`,
+              title: "Identity Verified",
+              description: `Welcome, ${result.user.name}. Entering Command Center.`,
             });
             router.push("/admin/dashboard");
           } else {
             setLoading(false);
-            setError("Administrative privileges are required for Faculty access.");
+            setError("Faculty access requires administrative privileges.");
             toast({
               title: "Access Restricted",
-              description: "Your account does not have faculty/admin permissions.",
+              description: "This account is not registered as Faculty/Admin.",
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Identity Authenticated",
-            description: `Welcome, ${result.user.name}. Accessing Digital Logbook.`,
+            title: "Identity Verified",
+            description: `Welcome back, ${result.user.name}.`,
           });
           router.push("/visitor/checkin");
         }
       } else {
         setLoading(false);
-        setError(result.error || "Verification failed. Please check your credentials.");
+        setError(result.error || "Verification failed. Check your institutional email.");
       }
-    } catch (err: any) {
-      setLoading(false);
-      setError("A system error occurred during verification.");
-      console.error("Login component error:", err);
-    }
+    }, 800);
   };
 
   if (!mounted) return null;
@@ -90,7 +86,7 @@ export default function LoginPage() {
                 alt="NEU Logo"
                 width={72}
                 height={72}
-                className="object-contain animate-float"
+                className="object-contain"
                 priority
               />
             </div>
