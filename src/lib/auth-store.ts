@@ -1,7 +1,7 @@
 
 "use client"
 
-import { User, VisitRecord, UserType } from "./types";
+import { User, VisitRecord } from "./types";
 import { useState, useEffect } from "react";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
@@ -122,14 +122,14 @@ export function useAuthStore() {
         };
 
         setDoc(sessionRef, sessionData).catch(() => {
-          // Silent fail for session tracking to avoid blocking login
+          // Silent fail for session tracking
         });
       }
 
       notify();
       return { success: true, user };
     } catch (err) {
-      return { error: "System verification error. Please try again." };
+      return { error: "System verification error." };
     }
   };
 

@@ -30,11 +30,15 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+    
     setError(null);
     setLoading(true);
 
-    // Short delay to simulate institutional verification
-    setTimeout(() => {
+    try {
+      // Small delay to simulate verification
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       const result = login(email);
 
       if (result.success && result.user) {
@@ -46,13 +50,8 @@ export default function LoginPage() {
             });
             router.push("/admin/dashboard");
           } else {
-            setLoading(false);
             setError("Faculty access requires administrative privileges.");
-            toast({
-              title: "Access Restricted",
-              description: "This account is not registered as Faculty/Admin.",
-              variant: "destructive",
-            });
+            setLoading(false);
           }
         } else {
           toast({
@@ -62,22 +61,27 @@ export default function LoginPage() {
           router.push("/visitor/checkin");
         }
       } else {
-        setLoading(false);
         setError(result.error || "Verification failed. Check your institutional email.");
+        setLoading(false);
       }
-    }, 800);
+    } catch (err) {
+      setError("A system error occurred. Please try again.");
+      setLoading(false);
+    }
   };
 
   if (!mounted) return null;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute inset-0 z-0">
+      {/* Background elements with z-0 */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[160px] animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[140px]" />
       </div>
 
-      <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-16 items-center z-10">
+      {/* Content container with relative and z-10 to ensure interactivity */}
+      <div className="relative z-10 max-w-6xl w-full grid lg:grid-cols-2 gap-16 items-center">
         <div className="space-y-10">
           <div className="flex items-center gap-5">
             <div className="bg-white p-4 rounded-3xl shadow-xl border border-white/10 backdrop-blur-md">
@@ -122,7 +126,7 @@ export default function LoginPage() {
         </div>
 
         <Card className="glass-card rounded-[3rem] border-white/5 overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
           
           <CardHeader className="space-y-3 p-12 pb-6">
             <CardTitle className="text-4xl font-black text-foreground">Identity Access</CardTitle>
@@ -194,6 +198,7 @@ export default function LoginPage() {
                     onChange={(e) => { setEmail(e.target.value); setError(null); }}
                     className="h-16 pl-14 bg-white/5 border-white/10 focus:border-primary/50 focus:ring-primary/20 text-lg rounded-2xl transition-all"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
