@@ -1,45 +1,44 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
+    --background: 20 10% 4%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 7%;
+    --card: 20 10% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 7%;
+    --popover: 20 10% 7%;
     --popover-foreground: 0 0% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 12%;
+    --primary: 20 90% 70%;
+    --primary-foreground: 20 10% 10%;
+    --secondary: 20 5% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 5% 12%;
-    --muted-foreground: 240 5% 60%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 20 5% 12%;
+    --muted-foreground: 20 5% 60%;
+    --accent: 20 90% 70%;
+    --accent-foreground: 20 10% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 12%;
-    --input: 240 5% 12%;
-    --ring: 217 91% 60%;
-    --radius: 1.25rem;
+    --border: 20 5% 15%;
+    --input: 20 5% 15%;
+    --ring: 20 90% 70%;
+    --radius: 1.5rem;
     
-    --chart-1: 217 91% 60%;
-    --chart-2: 240 5% 25%;
-    --chart-3: 240 5% 40%;
-    --chart-4: 240 5% 55%;
-    --chart-5: 240 5% 70%;
+    --chart-1: 20 90% 70%;
+    --chart-2: 20 30% 25%;
+    --chart-3: 20 30% 40%;
+    --chart-4: 20 30% 55%;
+    --chart-5: 20 30% 70%;
 
-    --sidebar-background: 240 10% 4%;
-    --sidebar-foreground: 240 5% 85%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 10%;
-    --sidebar-accent-foreground: 240 5% 95%;
-    --sidebar-border: 240 5% 10%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-background: 20 10% 4%;
+    --sidebar-foreground: 20 5% 85%;
+    --sidebar-primary: 20 90% 70%;
+    --sidebar-primary-foreground: 20 10% 10%;
+    --sidebar-accent: 20 5% 10%;
+    --sidebar-accent-foreground: 20 90% 70%;
+    --sidebar-border: 20 5% 10%;
+    --sidebar-ring: 20 90% 70%;
   }
 }
 
@@ -57,7 +56,7 @@
 
 /* Glassmorphism effects */
 .glass-card {
-  @apply bg-card/60 backdrop-blur-xl border-white/5 shadow-2xl;
+  @apply bg-card/60 backdrop-blur-2xl border-white/5 shadow-2xl;
 }
 
 .glass-nav {
@@ -72,7 +71,7 @@
   @apply bg-background;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
 }
 
 /* Animations */
@@ -84,4 +83,8 @@
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+.peach-glow {
+  box-shadow: 0 0 50px -10px hsla(20, 90%, 70%, 0.3);
 }
