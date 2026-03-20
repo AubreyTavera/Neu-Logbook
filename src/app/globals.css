@@ -1,46 +1,45 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 8%;
+    --background: 240 10% 4%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 10%;
+    --card: 240 10% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 10%;
+    --popover: 240 10% 7%;
     --popover-foreground: 0 0% 98%;
-    --primary: 240 5% 20%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 5% 15%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 5% 65%;
-    --accent: 210 100% 50%;
-    --accent-foreground: 0 0% 98%;
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 60%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 15%;
-    --input: 240 5% 15%;
-    --ring: 210 100% 50%;
-    --radius: 1rem;
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 217 91% 60%;
+    --radius: 1.25rem;
     
-    /* Charts */
-    --chart-1: 210 100% 50%;
-    --chart-2: 240 5% 30%;
-    --chart-3: 240 5% 45%;
-    --chart-4: 240 5% 60%;
-    --chart-5: 240 5% 75%;
+    --chart-1: 217 91% 60%;
+    --chart-2: 240 5% 25%;
+    --chart-3: 240 5% 40%;
+    --chart-4: 240 5% 55%;
+    --chart-5: 240 5% 70%;
 
-    /* Sidebar specific */
-    --sidebar-background: 240 10% 8%;
+    --sidebar-background: 240 10% 4%;
     --sidebar-foreground: 240 5% 85%;
-    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 15%;
+    --sidebar-accent: 240 5% 10%;
     --sidebar-accent-foreground: 240 5% 95%;
-    --sidebar-border: 240 5% 15%;
-    --sidebar-ring: 210 100% 50%;
+    --sidebar-border: 240 5% 10%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -49,20 +48,40 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased selection:bg-primary selection:text-primary-foreground;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline tracking-tight;
+    @apply font-headline tracking-tight font-black;
   }
 }
 
-/* Custom Scrollbar for Dark Theme */
+/* Glassmorphism effects */
+.glass-card {
+  @apply bg-card/60 backdrop-blur-xl border-white/5 shadow-2xl;
+}
+
+.glass-nav {
+  @apply bg-background/80 backdrop-blur-md border-b border-white/5;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   @apply bg-background;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full hover:bg-muted-foreground/30 transition-colors;
+  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

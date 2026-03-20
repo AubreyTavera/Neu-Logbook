@@ -2,22 +2,22 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-bg",
-      "description": "A modern university library interior with large windows and students studying.",
-      "imageUrl": "https://picsum.photos/seed/library1/1200/800",
-      "imageHint": "university library"
+      "id": "neu-campus-aerial",
+      "description": "Aerial view of a modern university campus with green spaces.",
+      "imageUrl": "https://picsum.photos/seed/neu1/1920/1080",
+      "imageHint": "university campus"
     },
     {
-      "id": "dean-office",
-      "description": "A clean, professional administrative office setting.",
-      "imageUrl": "https://picsum.photos/seed/office1/600/400",
-      "imageHint": "professional office"
+      "id": "library-interior",
+      "description": "A high-tech university library with glass walls and modern furniture.",
+      "imageUrl": "https://picsum.photos/seed/library2/1200/800",
+      "imageHint": "modern library"
     },
     {
-      "id": "visitor-checkin",
-      "description": "Person using a tablet for digital check-in.",
-      "imageUrl": "https://picsum.photos/seed/checkin/800/600",
-      "imageHint": "digital check-in"
+      "id": "admin-office",
+      "description": "A professional executive office with a view of the campus.",
+      "imageUrl": "https://picsum.photos/seed/office2/800/600",
+      "imageHint": "executive office"
     }
   ]
 }

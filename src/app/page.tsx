@@ -1,9 +1,10 @@
+
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { GraduationCap, Building2, Mail, Loader2, ArrowRight, ShieldCheck } from "lucide-react";
+import { GraduationCap, Building2, Mail, Loader2, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,17 +16,22 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const router = useRouter();
   const { login } = useAuthStore();
   const { toast } = useToast();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.endsWith("@neu.edu.ph")) {
       toast({
-        title: "Access Restricted",
-        description: "Please use your institutional @neu.edu.ph email address.",
+        title: "Restricted Access",
+        description: "Official @neu.edu.ph institutional email required.",
         variant: "destructive",
       });
       return;
@@ -45,133 +51,154 @@ export default function LoginPage() {
         }
       } else {
         toast({
-          title: "Login Failed",
+          title: "Verification Failed",
           description: result.error,
           variant: "destructive",
         });
       }
-    }, 800);
+    }, 1200);
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-        <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-accent/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-primary/30 rounded-full blur-[100px]" />
+    <div className="min-h-screen bg-[#060608] flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Immersive Background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[160px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[140px]" />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20" />
       </div>
 
-      <div className="max-w-5xl w-full grid md:grid-cols-2 gap-12 items-center z-10">
-        <div className="space-y-8">
-          <div className="flex items-center gap-4">
-            <div className="bg-card p-3 rounded-2xl shadow-2xl border border-white/5">
+      <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-16 items-center z-10">
+        <div className="space-y-10">
+          <div className="flex items-center gap-5">
+            <div className="bg-card/40 p-4 rounded-3xl shadow-2xl border border-white/10 backdrop-blur-md">
               <Image 
                 src="https://upload.wikimedia.org/wikipedia/en/c/c6/New_Era_University.svg" 
                 alt="NEU Logo"
-                width={64}
-                height={64}
-                className="object-contain"
+                width={72}
+                height={72}
+                className="object-contain animate-float"
                 priority
               />
             </div>
             <div>
-              <h1 className="text-4xl font-headline font-black tracking-tighter text-white">NEU LOGBOOK</h1>
-              <p className="text-accent font-medium tracking-widest text-[10px] uppercase">Visitor Management System</p>
+              <h1 className="text-5xl font-black tracking-tighter text-white leading-none">NEU LOGBOOK</h1>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="h-1 w-8 bg-primary rounded-full" />
+                <p className="text-primary font-bold tracking-[0.3em] text-[10px] uppercase">Digital Entry Gateway</p>
+              </div>
             </div>
           </div>
           
-          <div className="space-y-4">
-            <h2 className="text-5xl lg:text-6xl font-headline font-bold leading-[1.1] text-white">
+          <div className="space-y-6">
+            <h2 className="text-6xl xl:text-7xl font-black leading-[0.95] text-white tracking-tighter">
               Institutional <br />
-              <span className="text-accent">Verification.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-400">Excellence.</span>
             </h2>
-            <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
-              Official digital gateway for students, faculty, and administrators of New Era University.
+            <p className="text-muted-foreground text-xl max-w-md leading-relaxed font-medium">
+              The official visitor verification and real-time activity management portal for New Era University.
             </p>
           </div>
 
-          <div className="flex gap-6">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/5 px-4 py-2 rounded-full border border-white/5">
-              <ShieldCheck className="w-4 h-4 text-accent" />
-              Secure Auth
+          <div className="flex flex-wrap gap-4">
+            <div className="flex items-center gap-3 text-xs font-bold text-white bg-white/5 px-6 py-3 rounded-2xl border border-white/5 backdrop-blur-sm">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+              SSO SECURED
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/5 px-4 py-2 rounded-full border border-white/5">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Live Monitoring
+            <div className="flex items-center gap-3 text-xs font-bold text-white bg-white/5 px-6 py-3 rounded-2xl border border-white/5 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              LIVE LOGGING
             </div>
           </div>
         </div>
 
-        <Card className="shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-white/5 bg-card/80 backdrop-blur-xl">
-          <CardHeader className="space-y-2 pb-8">
-            <CardTitle className="text-3xl font-headline font-bold text-white">
-              Welcome Back
-            </CardTitle>
-            <CardDescription className="text-muted-foreground text-base">
-              Identify your university role to proceed.
+        <Card className="glass-card rounded-[3rem] border-white/10 overflow-hidden relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <CardHeader className="space-y-3 p-12 pb-6">
+            <CardTitle className="text-4xl font-black text-white">Identity Access</CardTitle>
+            <CardDescription className="text-muted-foreground text-lg">
+              Select your role to authenticate with the university system.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-8">
-            <div className="grid grid-cols-2 gap-4">
+          
+          <CardContent className="p-12 pt-0 space-y-10">
+            <div className="grid grid-cols-2 gap-5">
               <button 
                 onClick={() => setIsAdminMode(false)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-6 rounded-2xl border transition-all gap-3 group",
+                  "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
                   !isAdminMode 
-                    ? "bg-accent border-accent text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]" 
+                    ? "bg-primary border-primary text-white shadow-[0_20px_40px_rgba(59,130,246,0.3)] scale-105" 
                     : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
                 )}
               >
-                <GraduationCap className={cn("w-8 h-8 transition-transform group-hover:scale-110", !isAdminMode ? "text-white" : "text-muted-foreground")} />
-                <span className="font-bold text-sm">Student</span>
+                <div className={cn(
+                  "p-4 rounded-2xl transition-colors",
+                  !isAdminMode ? "bg-white/20" : "bg-white/5"
+                )}>
+                  <GraduationCap className="w-8 h-8" />
+                </div>
+                <span className="font-black text-sm uppercase tracking-widest">Student</span>
               </button>
+              
               <button 
                 onClick={() => setIsAdminMode(true)}
                 className={cn(
-                  "flex flex-col items-center justify-center p-6 rounded-2xl border transition-all gap-3 group",
+                  "flex flex-col items-center justify-center p-8 rounded-[2rem] border transition-all gap-4 group/btn",
                   isAdminMode 
-                    ? "bg-accent border-accent text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]" 
+                    ? "bg-primary border-primary text-white shadow-[0_20px_40px_rgba(59,130,246,0.3)] scale-105" 
                     : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
                 )}
               >
-                <Building2 className={cn("w-8 h-8 transition-transform group-hover:scale-110", isAdminMode ? "text-white" : "text-muted-foreground")} />
-                <span className="font-bold text-sm">Faculty/Admin</span>
+                <div className={cn(
+                  "p-4 rounded-2xl transition-colors",
+                  isAdminMode ? "bg-white/20" : "bg-white/5"
+                )}>
+                  <Building2 className="w-8 h-8" />
+                </div>
+                <span className="font-black text-sm uppercase tracking-widest">Faculty</span>
               </button>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">
-                  Institutional Email
+            <form onSubmit={handleLogin} className="space-y-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-2">
+                  Institutional Email Address
                 </label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-colors" />
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <Input 
-                    placeholder="your.name@neu.edu.ph" 
+                    placeholder="name@neu.edu.ph" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-14 pl-12 bg-white/5 border-white/10 focus:border-accent/50 focus:ring-accent/20 text-lg rounded-xl transition-all"
+                    className="h-16 pl-14 bg-white/5 border-white/10 focus:border-primary/50 focus:ring-primary/20 text-lg rounded-2xl transition-all"
                     required
                   />
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-14 bg-accent hover:bg-accent/90 text-white text-lg font-bold rounded-xl shadow-lg transition-all group" disabled={loading}>
+              <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-white text-lg font-black rounded-2xl shadow-2xl transition-all group active:scale-95" disabled={loading}>
                 {loading ? (
                   <Loader2 className="w-6 h-6 animate-spin" />
                 ) : (
-                  <>
-                    Continue Access
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </>
+                  <div className="flex items-center gap-3">
+                    VERIFY & CONTINUE
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                  </div>
                 )}
               </Button>
             </form>
 
-            <div className="pt-4 border-t border-white/5">
-              <p className="text-center text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-bold">
-                Secured by NEU Institutional Systems
+            <div className="pt-8 border-t border-white/5 flex flex-col items-center gap-4">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.4em] font-black">
+                Official NEU Security Protocol
               </p>
+              <Button variant="link" className="text-muted-foreground hover:text-white text-xs gap-2">
+                Need Access Help? <ExternalLink className="w-3 h-3" />
+              </Button>
             </div>
           </CardContent>
         </Card>

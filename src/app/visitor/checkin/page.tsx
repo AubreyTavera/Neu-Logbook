@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react";
@@ -7,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useAuthStore } from "@/lib/auth-store";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Library, Clock, ShieldAlert, Navigation } from "lucide-react";
+import { CheckCircle2, Library, Clock, ShieldAlert, Navigation, Sparkles, Building2, UserCircle2 } from "lucide-react";
 import { UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const DEPARTMENTS = [
   "College of Agriculture",
@@ -58,8 +60,8 @@ export default function CheckInPage() {
     e.preventDefault();
     if (!formData.department || !formData.reason) {
       toast({
-        title: "Incomplete Log",
-        description: "Please specify your department and reason for visit.",
+        title: "Entry Incomplete",
+        description: "Institutional department and visit reason are mandatory.",
         variant: "destructive",
       });
       return;
@@ -80,135 +82,157 @@ export default function CheckInPage() {
       setLoading(false);
       setSubmitted(true);
       toast({
-        title: "Visit Authenticated",
-        description: "Your check-in has been registered in the logbook.",
+        title: "Log Entry Authenticated",
+        description: "Your campus check-in is now globally recorded.",
       });
-    }, 1000);
+    }, 1500);
   };
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto mt-20 text-center space-y-8 animate-in zoom-in-95 duration-500">
-        <div className="bg-card p-12 rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/5 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-accent" />
-          <div className="flex justify-center mb-8">
-            <div className="bg-accent/10 p-6 rounded-full border border-accent/20">
-              <CheckCircle2 className="w-20 h-20 text-accent animate-in slide-in-from-bottom-4" />
+      <div className="min-h-[80vh] flex items-center justify-center p-6 animate-in zoom-in-95 duration-700">
+        <div className="max-w-xl w-full glass-card rounded-[4rem] p-16 text-center space-y-10 relative overflow-hidden border-white/10">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-indigo-500" />
+          
+          <div className="flex justify-center">
+            <div className="bg-primary/20 p-8 rounded-[2.5rem] border border-primary/30 relative">
+              <CheckCircle2 className="w-24 h-24 text-primary animate-bounce shadow-2xl" />
+              <Sparkles className="absolute -top-2 -right-2 w-8 h-8 text-amber-400 animate-pulse" />
             </div>
           </div>
-          <h2 className="text-4xl font-headline font-black text-white mb-3">Check-in Successful</h2>
-          <p className="text-muted-foreground text-lg mb-10">
-            Welcome to the <span className="text-accent font-bold">{formData.location}</span>. Your attendance has been logged at New Era University.
-          </p>
-          <div className="space-y-4 max-w-xs mx-auto">
-            <Button className="w-full h-14 bg-accent text-white font-bold rounded-2xl shadow-lg" onClick={() => setSubmitted(false)}>
-              Back to Dashboard
-            </Button>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
-              ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+          
+          <div className="space-y-4">
+            <h2 className="text-5xl font-black text-white tracking-tighter">Check-in Verified</h2>
+            <p className="text-muted-foreground text-xl font-medium">
+              Your visit to the <span className="text-primary font-black uppercase tracking-widest">{formData.location}</span> has been authenticated.
             </p>
           </div>
+
+          <div className="bg-white/5 p-8 rounded-3xl border border-white/5 space-y-4">
+            <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-muted-foreground">
+              <span>Security Token</span>
+              <span className="text-primary">{Math.random().toString(36).substr(2, 8).toUpperCase()}</span>
+            </div>
+            <div className="h-px bg-white/5" />
+            <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-muted-foreground">
+              <span>Timestamp</span>
+              <span className="text-white">{new Date().toLocaleTimeString()}</span>
+            </div>
+          </div>
+
+          <Button className="w-full h-16 bg-primary text-white font-black rounded-2xl shadow-2xl text-lg uppercase tracking-widest active:scale-95 transition-all" onClick={() => setSubmitted(false)}>
+            Return to Dashboard
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3 mb-2">
-          <Badge className="bg-accent text-white px-3 py-1 font-bold">Live Entry</Badge>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-bold uppercase tracking-widest">
-            <Navigation className="w-3 h-3" />
-            Facility Check-in
+    <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+          <Badge className="bg-primary text-white px-5 py-2 font-black text-[10px] uppercase tracking-[0.2em] rounded-full">Secure Entry</Badge>
+          <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">
+            <Navigation className="w-3.5 h-3.5 text-primary" />
+            New Era University Facility Access
           </div>
         </div>
-        <h1 className="text-5xl font-headline font-black text-white tracking-tight">University Logbook</h1>
-        <p className="text-muted-foreground text-lg">Welcome back, <span className="text-white font-bold">{currentUser?.name}</span>. Please verify your visit details.</p>
+        <h1 className="text-6xl font-black text-white tracking-tighter leading-none">Log Your Visit</h1>
+        <p className="text-muted-foreground text-xl font-medium leading-relaxed max-w-2xl">
+          Authenticated as <span className="text-white font-black underline decoration-primary underline-offset-8 decoration-4">{currentUser?.name}</span>. Verify your current campus activity below.
+        </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2">
-          <Card className="border-white/5 bg-card shadow-2xl rounded-[2rem] overflow-hidden">
-            <CardHeader className="p-10 pb-0">
-              <CardTitle className="text-2xl font-black text-white">Logbook Entry</CardTitle>
-              <CardDescription className="text-muted-foreground">Digital verification of your campus activity.</CardDescription>
+      <div className="grid lg:grid-cols-5 gap-12">
+        <div className="lg:col-span-3">
+          <Card className="glass-card rounded-[3.5rem] border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.6)]">
+            <CardHeader className="p-12 pb-0">
+              <div className="flex items-center gap-4 mb-2">
+                <Sparkles className="w-6 h-6 text-primary" />
+                <CardTitle className="text-3xl font-black text-white">Entry Manifest</CardTitle>
+              </div>
+              <CardDescription className="text-muted-foreground text-lg">Digital verification of your institutional check-in.</CardDescription>
             </CardHeader>
-            <CardContent className="p-10 space-y-8">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-3">
-                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">My Designation</label>
+            <CardContent className="p-12 space-y-10">
+              <form onSubmit={handleSubmit} className="space-y-10">
+                <div className="grid md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2 flex items-center gap-2">
+                      <UserCircle2 className="w-3 h-3 text-primary" /> Designation
+                    </label>
                     <Select defaultValue={formData.visitorType} onValueChange={(val: UserType) => setFormData({...formData, visitorType: val})}>
-                      <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-accent/20">
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
                         <SelectValue placeholder="Are you a Student/Teacher?" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="glass-card border-white/10 rounded-2xl">
                         {VISITOR_TYPES.map(type => (
-                          <SelectItem key={type} value={type} className="py-3">{type}</SelectItem>
+                          <SelectItem key={type} value={type} className="py-4 font-bold">{type}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-3">
-                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Target Facility</label>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2 flex items-center gap-2">
+                      <Building2 className="w-3 h-3 text-primary" /> Facility
+                    </label>
                     <Select defaultValue="Library" onValueChange={(val: any) => setFormData({...formData, location: val})}>
-                      <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-accent/20">
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
                         <SelectValue placeholder="Select Facility" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Library" className="py-3">Main Library</SelectItem>
-                        <SelectItem value="Dean" className="py-3">Dean's Office</SelectItem>
+                      <SelectContent className="glass-card border-white/10 rounded-2xl">
+                        <SelectItem value="Library" className="py-4 font-bold">University Main Library</SelectItem>
+                        <SelectItem value="Dean" className="py-4 font-bold">College Dean's Office</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-3">
-                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Institutional Department</label>
+                <div className="grid md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2">Affiliation (College)</label>
                     <Select onValueChange={(val) => setFormData({...formData, department: val})}>
-                      <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-accent/20">
-                        <SelectValue placeholder="Select College/Dept" />
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
+                        <SelectValue placeholder="Select Institutional Dept" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="glass-card border-white/10 rounded-2xl max-h-[400px]">
                         {DEPARTMENTS.map(dept => (
-                          <SelectItem key={dept} value={dept} className="py-3">{dept}</SelectItem>
+                          <SelectItem key={dept} value={dept} className="py-4 font-bold">{dept}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-3">
-                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Visit Motivation</label>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2">Primary Intent</label>
                     <Select onValueChange={(val) => setFormData({...formData, reason: val})}>
-                      <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-accent/20">
-                        <SelectValue placeholder="Select Primary Reason" />
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
+                        <SelectValue placeholder="Select Reason" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="glass-card border-white/10 rounded-2xl">
                         {REASONS.map(reason => (
-                          <SelectItem key={reason} value={reason} className="py-3">{reason}</SelectItem>
+                          <SelectItem key={reason} value={reason} className="py-4 font-bold">{reason}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Additional Context (Optional)</label>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2">Session Context (Optional)</label>
                   <Textarea 
-                    placeholder="Enter visit details or specific requirements..." 
-                    className="min-h-[120px] bg-white/5 border-white/10 rounded-2xl focus:ring-accent/20 resize-none p-4"
+                    placeholder="Provide additional details regarding your visit..." 
+                    className="min-h-[160px] bg-white/5 border-white/10 rounded-[2rem] focus:ring-primary/20 resize-none p-8 text-sm font-medium leading-relaxed"
                   />
                 </div>
 
-                <Button type="submit" className="w-full h-16 bg-accent hover:bg-accent/90 text-white py-6 text-xl font-black rounded-2xl shadow-xl transition-all group" disabled={loading}>
+                <Button type="submit" className="w-full h-20 bg-primary hover:bg-primary/90 text-white text-xl font-black rounded-[2rem] shadow-[0_20px_60px_rgba(59,130,246,0.3)] transition-all group active:scale-[0.98]" disabled={loading}>
                   {loading ? (
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-6 h-6 animate-spin" />
-                      Recording Entry...
+                    <div className="flex items-center gap-4">
+                      <Clock className="w-8 h-8 animate-spin" />
+                      COMMITTING ENTRY...
                     </div>
                   ) : (
-                    "SUBMIT LOGBOOK ENTRY"
+                    "AUTHENTICATE LOGBOOK ENTRY"
                   )}
                 </Button>
               </form>
@@ -216,24 +240,25 @@ export default function CheckInPage() {
           </Card>
         </div>
 
-        <div className="space-y-8">
-          <Card className="bg-accent text-white border-none shadow-[0_15px_40px_rgba(59,130,246,0.2)] rounded-[2rem] overflow-hidden">
-            <CardContent className="p-8 space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-white/20 p-3 rounded-2xl">
-                  <Library className="w-6 h-6" />
+        <div className="lg:col-span-2 space-y-10">
+          <Card className="bg-primary text-white border-none shadow-[0_30px_70px_rgba(59,130,246,0.25)] rounded-[3rem] overflow-hidden group">
+            <CardContent className="p-10 space-y-8 relative">
+              <div className="absolute -right-8 -top-8 w-48 h-48 bg-white/10 rounded-full blur-[40px] group-hover:scale-125 transition-transform" />
+              <div className="flex items-center gap-5 relative z-10">
+                <div className="bg-white/20 p-4 rounded-3xl">
+                  <Library className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-black">Guidelines</h3>
+                <h3 className="text-2xl font-black tracking-tight">Entry Protocols</h3>
               </div>
-              <ul className="space-y-4">
+              <ul className="space-y-6 relative z-10">
                 {[
-                  "Observe institutional dress code policy.",
-                  "Maintain silence in academic zones.",
-                  "Keep a digital record of check-out time.",
-                  "Secure all personal electronic devices."
+                  "Maintain strict institutional dress code standards.",
+                  "Academic silence policy in effect for all zones.",
+                  "Digital check-out is mandatory for data accuracy.",
+                  "Surveillance and ID verification active."
                 ].map((text, i) => (
-                  <li key={i} className="flex gap-4 items-start text-sm font-medium opacity-90">
-                    <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                  <li key={i} className="flex gap-5 items-start text-sm font-bold opacity-90 leading-relaxed">
+                    <div className="w-6 h-6 rounded-xl bg-white/20 flex items-center justify-center text-[10px] shrink-0 mt-0.5 font-black">
                       {i+1}
                     </div>
                     <span>{text}</span>
@@ -243,31 +268,29 @@ export default function CheckInPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-white/5 bg-card/50 shadow-xl rounded-[2rem]">
-            <CardContent className="p-8 space-y-6">
-              <div className="flex items-center gap-3 text-white">
-                <Clock className="w-5 h-5 text-accent" />
-                <h3 className="font-black text-lg">Operating Hours</h3>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { days: "Mon - Fri", hours: "8:00 AM - 8:00 PM" },
-                  { days: "Saturday", hours: "9:00 AM - 5:00 PM" },
-                  { days: "Sunday", hours: "Closed", closed: true }
-                ].map((item, i) => (
-                  <div key={i} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
-                    <span className="text-muted-foreground text-sm font-bold">{item.days}</span>
-                    <span className={cn("text-sm font-black", item.closed ? "text-destructive" : "text-white")}>{item.hours}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-white/5 p-4 rounded-xl flex gap-3">
-                <ShieldAlert className="w-4 h-4 text-orange-500 shrink-0" />
-                <p className="text-[10px] text-muted-foreground font-medium uppercase leading-normal">
-                  Unauthorized access is strictly prohibited. Identity verification active.
-                </p>
-              </div>
-            </CardContent>
+          <Card className="glass-card rounded-[3rem] border-white/5 p-10 space-y-8">
+            <div className="flex items-center gap-4 text-white">
+              <Clock className="w-6 h-6 text-primary" />
+              <h3 className="font-black text-xl tracking-tight">Operational Hours</h3>
+            </div>
+            <div className="space-y-6">
+              {[
+                { days: "Mon - Friday", hours: "08:00 AM - 08:00 PM" },
+                { days: "Saturday", hours: "09:00 AM - 05:00 PM" },
+                { days: "Sunday", hours: "Institutional Holiday", closed: true }
+              ].map((item, i) => (
+                <div key={i} className="flex justify-between items-center py-4 border-b border-white/5 last:border-0">
+                  <span className="text-muted-foreground text-xs font-black uppercase tracking-widest">{item.days}</span>
+                  <span className={cn("text-sm font-black tracking-tight", item.closed ? "text-destructive" : "text-white")}>{item.hours}</span>
+                </div>
+              ))}
+            </div>
+            <div className="bg-orange-500/10 p-6 rounded-[1.5rem] border border-orange-500/20 flex gap-4">
+              <ShieldAlert className="w-5 h-5 text-orange-500 shrink-0" />
+              <p className="text-[10px] text-orange-200/80 font-black uppercase tracking-[0.15em] leading-relaxed">
+                Security alert: Unauthorized entry will trigger immediate administrative notification.
+              </p>
+            </div>
           </Card>
         </div>
       </div>
