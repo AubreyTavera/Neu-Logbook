@@ -45,10 +45,10 @@ export function AppSidebar() {
   return (
     <div className="flex flex-col h-full bg-sidebar w-80 border-r border-sidebar-border p-8 shadow-sm relative overflow-hidden shrink-0">
       {/* Dynamic Background Light */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-[80px] -mr-20 -mt-20 animate-pulse" />
+      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[80px] -mr-20 -mt-20 animate-pulse" />
 
       <div className="flex items-center gap-5 mb-16 relative z-10 px-2">
-        <div className="bg-white p-3 rounded-2xl border border-sidebar-border shadow-md group hover:border-primary/50 transition-colors">
+        <div className="bg-white p-3 rounded-2xl border border-white/5 shadow-md group hover:border-primary/50 transition-colors">
           <Image 
             src="https://upload.wikimedia.org/wikipedia/en/c/c6/New_Era_University.svg" 
             alt="NEU Logo"
@@ -79,7 +79,7 @@ export function AppSidebar() {
                     "w-full flex items-center justify-between group px-6 py-4 rounded-2xl transition-all relative overflow-hidden",
                     isActive 
                       ? "bg-primary text-primary-foreground font-bold shadow-lg" 
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                   )}
                   onClick={() => router.push(item.href)}
                 >
@@ -113,7 +113,7 @@ export function AppSidebar() {
       </div>
 
       <div className="pt-8 border-t border-sidebar-border relative z-10">
-        <div className="flex items-center gap-5 px-5 py-5 bg-muted rounded-[2rem] border border-sidebar-border mb-8 hover:border-primary/20 transition-all cursor-default">
+        <div className="flex items-center gap-5 px-5 py-5 bg-white/5 rounded-[2rem] border border-white/5 mb-8 hover:border-primary/20 transition-all cursor-default">
           <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary text-lg shadow-sm">
             {currentUser?.name ? currentUser.name[0] : "U"}
           </div>
@@ -128,7 +128,7 @@ export function AppSidebar() {
         
         <Button 
           variant="ghost" 
-          className="w-full justify-start gap-4 h-14 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-2xl px-6 transition-all group"
+          className="w-full justify-start gap-4 h-14 text-red-400 hover:bg-red-400/10 hover:text-red-400 rounded-2xl px-6 transition-all group"
           onClick={handleLogout}
         >
           <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />

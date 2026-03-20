@@ -90,13 +90,13 @@ export default function CheckInPage() {
   if (submitted) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-6 animate-in zoom-in-95 duration-700">
-        <div className="max-w-xl w-full glass-card rounded-[4rem] p-16 text-center space-y-10 relative overflow-hidden border-border">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-orange-400" />
+        <div className="max-w-xl w-full glass-card rounded-[4rem] p-16 text-center space-y-10 relative overflow-hidden border-white/5">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-blue-400" />
           
           <div className="flex justify-center">
             <div className="bg-primary/10 p-8 rounded-[2.5rem] border border-primary/20 relative">
               <CheckCircle2 className="w-24 h-24 text-primary animate-bounce shadow-sm" />
-              <Sparkles className="absolute -top-2 -right-2 w-8 h-8 text-orange-400 animate-pulse" />
+              <Sparkles className="absolute -top-2 -right-2 w-8 h-8 text-blue-400 animate-pulse" />
             </div>
           </div>
           
@@ -107,12 +107,12 @@ export default function CheckInPage() {
             </p>
           </div>
 
-          <div className="bg-muted p-8 rounded-3xl border border-border space-y-4">
+          <div className="bg-white/5 p-8 rounded-3xl border border-white/5 space-y-4">
             <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-muted-foreground">
               <span>Security Token</span>
               <span className="text-primary">{Math.random().toString(36).substr(2, 8).toUpperCase()}</span>
             </div>
-            <div className="h-px bg-border" />
+            <div className="h-px bg-white/5" />
             <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-muted-foreground">
               <span>Timestamp</span>
               <span className="text-foreground">{new Date().toLocaleTimeString()}</span>
@@ -145,7 +145,7 @@ export default function CheckInPage() {
 
       <div className="grid lg:grid-cols-5 gap-12">
         <div className="lg:col-span-3">
-          <Card className="glass-card rounded-[3.5rem] border-border shadow-2xl">
+          <Card className="glass-card rounded-[3.5rem] border-white/5 shadow-2xl">
             <CardHeader className="p-12 pb-0">
               <div className="flex items-center gap-4 mb-2">
                 <Sparkles className="w-6 h-6 text-primary" />
@@ -161,10 +161,10 @@ export default function CheckInPage() {
                       <UserCircle2 className="w-3 h-3 text-primary" /> Designation
                     </label>
                     <Select defaultValue={formData.visitorType} onValueChange={(val: UserType) => setFormData({...formData, visitorType: val})}>
-                      <SelectTrigger className="h-16 bg-muted border-border rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
                         <SelectValue placeholder="Are you a Student/Teacher?" />
                       </SelectTrigger>
-                      <SelectContent className="glass-card border-border rounded-2xl">
+                      <SelectContent className="glass-card border-white/10 rounded-2xl">
                         {VISITOR_TYPES.map(type => (
                           <SelectItem key={type} value={type} className="py-4 font-bold">{type}</SelectItem>
                         ))}
@@ -176,10 +176,10 @@ export default function CheckInPage() {
                       <Building2 className="w-3 h-3 text-primary" /> Facility
                     </label>
                     <Select defaultValue="Library" onValueChange={(val: any) => setFormData({...formData, location: val})}>
-                      <SelectTrigger className="h-16 bg-muted border-border rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
                         <SelectValue placeholder="Select Facility" />
                       </SelectTrigger>
-                      <SelectContent className="glass-card border-border rounded-2xl">
+                      <SelectContent className="glass-card border-white/10 rounded-2xl">
                         <SelectItem value="Library" className="py-4 font-bold">University Main Library</SelectItem>
                         <SelectItem value="Dean" className="py-4 font-bold">College Dean's Office</SelectItem>
                       </SelectContent>
@@ -191,10 +191,10 @@ export default function CheckInPage() {
                   <div className="space-y-4">
                     <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2">Affiliation (College)</label>
                     <Select onValueChange={(val) => setFormData({...formData, department: val})}>
-                      <SelectTrigger className="h-16 bg-muted border-border rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
                         <SelectValue placeholder="Select Institutional Dept" />
                       </SelectTrigger>
-                      <SelectContent className="glass-card border-border rounded-2xl max-h-[400px]">
+                      <SelectContent className="glass-card border-white/10 rounded-2xl max-h-[400px]">
                         {DEPARTMENTS.map(dept => (
                           <SelectItem key={dept} value={dept} className="py-4 font-bold">{dept}</SelectItem>
                         ))}
@@ -204,10 +204,10 @@ export default function CheckInPage() {
                   <div className="space-y-4">
                     <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2">Primary Intent</label>
                     <Select onValueChange={(val) => setFormData({...formData, reason: val})}>
-                      <SelectTrigger className="h-16 bg-muted border-border rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
+                      <SelectTrigger className="h-16 bg-white/5 border-white/10 rounded-[1.5rem] focus:ring-primary/20 px-8 text-sm font-bold tracking-tight">
                         <SelectValue placeholder="Select Reason" />
                       </SelectTrigger>
-                      <SelectContent className="glass-card border-border rounded-2xl">
+                      <SelectContent className="glass-card border-white/10 rounded-2xl">
                         {REASONS.map(reason => (
                           <SelectItem key={reason} value={reason} className="py-4 font-bold">{reason}</SelectItem>
                         ))}
@@ -220,7 +220,7 @@ export default function CheckInPage() {
                   <label className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground ml-2">Session Context (Optional)</label>
                   <Textarea 
                     placeholder="Provide additional details regarding your visit..." 
-                    className="min-h-[160px] bg-muted border-border rounded-[2rem] focus:ring-primary/20 resize-none p-8 text-sm font-medium leading-relaxed"
+                    className="min-h-[160px] bg-white/5 border-white/10 rounded-[2rem] focus:ring-primary/20 resize-none p-8 text-sm font-medium leading-relaxed"
                   />
                 </div>
 
@@ -267,7 +267,7 @@ export default function CheckInPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card rounded-[3rem] border-border p-10 space-y-8">
+          <Card className="glass-card rounded-[3rem] border-white/5 p-10 space-y-8">
             <div className="flex items-center gap-4 text-foreground">
               <Clock className="w-6 h-6 text-primary" />
               <h3 className="font-black text-xl tracking-tight">Operational Hours</h3>
@@ -278,15 +278,15 @@ export default function CheckInPage() {
                 { days: "Saturday", hours: "09:00 AM - 05:00 PM" },
                 { days: "Sunday", hours: "Institutional Holiday", closed: true }
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center py-4 border-b border-border last:border-0">
+                <div key={i} className="flex justify-between items-center py-4 border-b border-white/5 last:border-0">
                   <span className="text-muted-foreground text-xs font-black uppercase tracking-widest">{item.days}</span>
-                  <span className={cn("text-sm font-black tracking-tight", item.closed ? "text-destructive" : "text-foreground")}>{item.hours}</span>
+                  <span className={cn("text-sm font-black tracking-tight", item.closed ? "text-red-400" : "text-foreground")}>{item.hours}</span>
                 </div>
               ))}
             </div>
-            <div className="bg-orange-500/10 p-6 rounded-[1.5rem] border border-orange-200 flex gap-4">
-              <ShieldAlert className="w-5 h-5 text-orange-600 shrink-0" />
-              <p className="text-[10px] text-orange-800 font-black uppercase tracking-[0.15em] leading-relaxed">
+            <div className="bg-blue-500/10 p-6 rounded-[1.5rem] border border-blue-500/20 flex gap-4">
+              <ShieldAlert className="w-5 h-5 text-blue-400 shrink-0" />
+              <p className="text-[10px] text-blue-200 font-black uppercase tracking-[0.15em] leading-relaxed">
                 Security alert: Unauthorized entry will trigger immediate administrative notification.
               </p>
             </div>

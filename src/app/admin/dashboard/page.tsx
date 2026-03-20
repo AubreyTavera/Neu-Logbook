@@ -111,8 +111,8 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 px-4 py-1.5 font-black text-[10px] uppercase tracking-widest">System Operational</Badge>
             <div className="flex items-center gap-2 text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em]">
-              <CalendarDays className="w-3 h-3" />
-              {new Date().toLocaleDateString(undefined, { dateStyle: 'long' })}
+              <Activity className="w-3 h-3 text-primary" />
+              Real-time Analytics Active
             </div>
           </div>
           <h1 className="text-6xl font-black text-foreground tracking-tighter leading-none">Command Center</h1>
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex bg-muted p-1.5 rounded-2xl border border-border shadow-sm">
+          <div className="flex bg-card p-1.5 rounded-2xl border border-white/5 shadow-sm">
             {(['Day', 'Week', 'Month'] as StatsFilter[]).map((f) => (
               <Button
                 key={f}
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
               </Button>
             ))}
           </div>
-          <Button variant="outline" className="h-14 px-8 rounded-2xl bg-white border-border font-black text-xs uppercase tracking-widest gap-2 hover:bg-muted transition-all">
+          <Button variant="outline" className="h-14 px-8 rounded-2xl bg-white/5 border-white/10 font-black text-xs uppercase tracking-widest gap-2 hover:bg-white/10 transition-all">
             <Download className="w-4 h-4" /> Export Report
           </Button>
         </div>
@@ -144,11 +144,11 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { label: "Active Check-ins", value: dateFilter === 'Day' ? stats.day : dateFilter === 'Week' ? stats.week : stats.month, icon: Users, color: "text-primary", bg: "bg-primary/10", trend: "+12.4%" },
-          { label: "Facility Usage", value: stats.libraryUsage, icon: Library, color: "text-indigo-600", bg: "bg-indigo-600/10", trend: "+5.1%" },
-          { label: "Student Traffic", value: stats.studentCount, icon: GraduationCap, color: "text-emerald-600", bg: "bg-emerald-600/10", trend: "+8.2%" },
-          { label: "Staff Activity", value: stats.employeeCount, icon: Briefcase, color: "text-orange-600", bg: "bg-orange-600/10", trend: "+3.4%" },
+          { label: "Facility Usage", value: stats.libraryUsage, icon: Library, color: "text-blue-400", bg: "bg-blue-400/10", trend: "+5.1%" },
+          { label: "Student Traffic", value: stats.studentCount, icon: GraduationCap, color: "text-emerald-400", bg: "bg-emerald-400/10", trend: "+8.2%" },
+          { label: "Staff Activity", value: stats.employeeCount, icon: Briefcase, color: "text-orange-400", bg: "bg-orange-400/10", trend: "+3.4%" },
         ].map((stat, i) => (
-          <Card key={i} className="glass-card rounded-[2.5rem] border-border overflow-hidden group hover:translate-y-[-4px] transition-all duration-300">
+          <Card key={i} className="glass-card rounded-[2.5rem] border-white/5 overflow-hidden group hover:translate-y-[-4px] transition-all duration-300">
             <CardContent className="p-10 space-y-6 relative">
               <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110", stat.bg)}>
                 <stat.icon className={cn("w-7 h-7", stat.color)} />
@@ -157,19 +157,19 @@ export default function AdminDashboard() {
                 <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.3em] mb-2">{stat.label}</p>
                 <div className="flex items-end gap-3">
                   <h2 className="text-5xl font-black text-foreground leading-none">{stat.value}</h2>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-black mb-1">
+                  <div className="flex items-center gap-1 text-emerald-400 text-xs font-black mb-1">
                     <TrendingUp className="w-3 h-3" />
                     {stat.trend}
                   </div>
                 </div>
               </div>
-              <ArrowUpRight className="absolute top-8 right-8 w-6 h-6 text-muted-foreground opacity-20 group-hover:opacity-100 group-hover:text-primary transition-all" />
+              <ArrowUpRight className="absolute top-8 right-8 w-6 h-6 text-white opacity-10 group-hover:opacity-100 group-hover:text-primary transition-all" />
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card className="glass-card rounded-[3.5rem] border-border overflow-hidden">
+      <Card className="glass-card rounded-[3.5rem] border-white/5 overflow-hidden">
         <CardHeader className="p-12 pb-0 flex flex-col xl:flex-row xl:items-center justify-between gap-10">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
@@ -184,30 +184,30 @@ export default function AdminDashboard() {
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input 
                 placeholder="Search visitor logs..." 
-                className="pl-14 w-80 h-14 bg-muted border-border rounded-2xl focus:ring-primary/20 text-sm font-medium transition-all"
+                className="pl-14 w-80 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 text-sm font-medium transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             
             <Select value={collegeFilter} onValueChange={setCollegeFilter}>
-              <SelectTrigger className="w-64 h-14 bg-muted border-border rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
+              <SelectTrigger className="w-64 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
                 <div className="flex items-center gap-2">
                   <Filter className="w-3 h-3 text-primary" />
                   <SelectValue placeholder="All Colleges" />
                 </div>
               </SelectTrigger>
-              <SelectContent className="glass-card border-border rounded-2xl">
+              <SelectContent className="glass-card border-white/5 rounded-2xl">
                 <SelectItem value="all" className="font-bold py-3">Global (All Depts)</SelectItem>
                 {COLLEGES.map(c => <SelectItem key={c} value={c} className="py-3">{c}</SelectItem>)}
               </SelectContent>
             </Select>
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-48 h-14 bg-muted border-border rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
+              <SelectTrigger className="w-48 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
-              <SelectContent className="glass-card border-border rounded-2xl">
+              <SelectContent className="glass-card border-white/5 rounded-2xl">
                 <SelectItem value="all" className="font-bold py-3">All Visitor Types</SelectItem>
                 <SelectItem value="Student" className="py-3">Students Only</SelectItem>
                 <SelectItem value="Employee" className="py-3">Faculty & Staff</SelectItem>
@@ -217,10 +217,10 @@ export default function AdminDashboard() {
         </CardHeader>
 
         <CardContent className="p-8">
-          <div className="rounded-[2.5rem] overflow-hidden border border-border bg-white shadow-inner">
+          <div className="rounded-[2.5rem] overflow-hidden border border-white/5 bg-card/20 shadow-inner">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-border bg-muted/50 hover:bg-muted/50">
+                <TableRow className="border-b border-white/5 bg-white/5 hover:bg-white/5">
                   <TableHead className="py-8 px-10 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Visitor Profile</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Affiliation</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Location</TableHead>
@@ -229,16 +229,16 @@ export default function AdminDashboard() {
               </TableHeader>
               <TableBody>
                 {filteredVisits.length > 0 ? filteredVisits.map((v) => (
-                  <TableRow key={v.id} className="border-b border-border hover:bg-muted/30 transition-all duration-300 group">
+                  <TableRow key={v.id} className="border-b border-white/5 hover:bg-white/5 transition-all duration-300 group">
                     <TableCell className="py-8 px-10">
                       <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-indigo-500/20 border border-border flex items-center justify-center text-foreground font-black text-xl shadow-sm group-hover:scale-105 transition-transform">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-blue-500/20 border border-white/10 flex items-center justify-center text-foreground font-black text-xl shadow-sm group-hover:scale-105 transition-transform">
                           {v.visitorName[0]}
                         </div>
                         <div>
                           <div className="font-black text-foreground text-lg tracking-tight mb-1">{v.visitorName}</div>
                           <div className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
-                            <Badge variant="outline" className="text-[9px] uppercase font-black py-0 border-border bg-background">{v.visitorType}</Badge>
+                            <Badge variant="outline" className="text-[9px] uppercase font-black py-0 border-white/10 bg-white/5">{v.visitorType}</Badge>
                             {v.visitorEmail}
                           </div>
                         </div>
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className={cn("w-2.5 h-2.5 rounded-full shadow-sm animate-pulse", 
-                          v.location === 'Library' ? "bg-primary" : "bg-indigo-500"
+                          v.location === 'Library' ? "bg-primary" : "bg-blue-500"
                         )} />
                         <span className="text-sm text-foreground font-black tracking-tight">{v.location}</span>
                       </div>
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
                           <Clock className="w-4 h-4 text-primary" />
                           {new Date(v.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
-                        <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-2 bg-muted px-3 py-1 rounded-full border border-border">
+                        <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
                           <CalendarDays className="w-3 h-3" />
                           {new Date(v.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
                         </div>
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
                 )) : (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-32 text-muted-foreground space-y-4">
-                      <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                      <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
                         <Search className="w-10 h-10 opacity-20" />
                       </div>
                       <p className="text-xl font-black text-foreground/40">No activity records discovered.</p>
