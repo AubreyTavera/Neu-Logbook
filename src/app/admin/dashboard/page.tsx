@@ -13,7 +13,8 @@ import {
   ArrowUpRight,
   Filter,
   Download,
-  Activity
+  Activity,
+  ChevronDown
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,17 @@ const COLLEGES = [
   "Graduate School",
 ];
 
+const REASONS = [
+  "Research",
+  "Study Session",
+  "Book Borrowing/Return",
+  "Computer Lab Usage",
+  "Meeting with Librarian",
+  "Consultation",
+  "Administrative Matter",
+  "Others",
+];
+
 export default function AdminDashboard() {
   const { visits } = useAuthStore();
   const [dateFilter, setDateFilter] = useState<StatsFilter>('Day');
@@ -62,28 +74,31 @@ export default function AdminDashboard() {
   
   const [collegeFilter, setCollegeFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [reasonFilter, setReasonFilter] = useState<string>("all");
 
   const filteredVisits = useMemo(() => {
     return visits.filter(v => {
       const matchesSearch = v.visitorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          v.visitorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          v.department.toLowerCase().includes(searchTerm.toLowerCase());
+                          v.visitorEmail.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCollege = collegeFilter === "all" || v.department === collegeFilter;
       const matchesType = typeFilter === "all" || 
-                         (typeFilter === "Student" ? v.visitorType === "Student" : v.visitorType === "Teacher" || v.visitorType === "Staff");
+                         (typeFilter === "Student" ? v.visitorType === "Student" : (v.visitorType === "Teacher" || v.visitorType === "Staff"));
+      const matchesReason = reasonFilter === "all" || v.reasonForVisit === reasonFilter;
 
-      return matchesSearch && matchesCollege && matchesType;
+      return matchesSearch && matchesCollege && matchesType && matchesReason;
     });
-  }, [visits, searchTerm, collegeFilter, typeFilter]);
+  }, [visits, searchTerm, collegeFilter, typeFilter, reasonFilter]);
 
   const stats = useMemo(() => {
     const now = new Date();
+    // Stats should reflect the active filters
     const baseVisits = visits.filter(v => {
       const matchesCollege = collegeFilter === "all" || v.department === collegeFilter;
       const matchesType = typeFilter === "all" || 
-                         (typeFilter === "Student" ? v.visitorType === "Student" : v.visitorType === "Teacher" || v.visitorType === "Staff");
-      return matchesCollege && matchesType;
+                         (typeFilter === "Student" ? v.visitorType === "Student" : (v.visitorType === "Teacher" || v.visitorType === "Staff"));
+      const matchesReason = reasonFilter === "all" || v.reasonForVisit === reasonFilter;
+      return matchesCollege && matchesType && matchesReason;
     });
 
     const day = baseVisits.filter(v => new Date(v.timestamp).toDateString() === now.toDateString()).length;
@@ -101,8 +116,13 @@ export default function AdminDashboard() {
     const studentCount = baseVisits.filter(v => v.visitorType === 'Student').length;
     const employeeCount = baseVisits.filter(v => v.visitorType === 'Teacher' || v.visitorType === 'Staff').length;
 
-    return { day, week, month, libraryUsage, studentCount, employeeCount };
-  }, [visits, collegeFilter, typeFilter]);
+    return { 
+      activeCount: dateFilter === 'Day' ? day : dateFilter === 'Week' ? week : month,
+      libraryUsage, 
+      studentCount, 
+      employeeCount 
+    };
+  }, [visits, collegeFilter, typeFilter, reasonFilter, dateFilter]);
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700 max-w-7xl mx-auto pb-12">
@@ -119,7 +139,7 @@ export default function AdminDashboard() {
           <p className="text-muted-foreground text-lg font-medium">Holistic real-time analytics for New Era University facilities.</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex bg-card p-1.5 rounded-2xl border border-white/5 shadow-sm">
             {(['Day', 'Week', 'Month'] as StatsFilter[]).map((f) => (
               <Button
@@ -143,7 +163,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
-          { label: "Active Check-ins", value: dateFilter === 'Day' ? stats.day : dateFilter === 'Week' ? stats.week : stats.month, icon: Users, color: "text-primary", bg: "bg-primary/10", trend: "+12.4%" },
+          { label: `Active (${dateFilter})`, value: stats.activeCount, icon: Users, color: "text-primary", bg: "bg-primary/10", trend: "+12.4%" },
           { label: "Facility Usage", value: stats.libraryUsage, icon: Library, color: "text-blue-400", bg: "bg-blue-400/10", trend: "+5.1%" },
           { label: "Student Traffic", value: stats.studentCount, icon: GraduationCap, color: "text-emerald-400", bg: "bg-emerald-400/10", trend: "+8.2%" },
           { label: "Staff Activity", value: stats.employeeCount, icon: Briefcase, color: "text-orange-400", bg: "bg-orange-400/10", trend: "+3.4%" },
@@ -183,36 +203,48 @@ export default function AdminDashboard() {
             <div className="relative group">
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input 
-                placeholder="Search visitor logs..." 
+                placeholder="Search visitor names..." 
                 className="pl-14 w-80 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 text-sm font-medium transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             
-            <Select value={collegeFilter} onValueChange={setCollegeFilter}>
-              <SelectTrigger className="w-64 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-3 h-3 text-primary" />
-                  <SelectValue placeholder="All Colleges" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="glass-card border-white/5 rounded-2xl">
-                <SelectItem value="all" className="font-bold py-3">Global (All Depts)</SelectItem>
-                {COLLEGES.map(c => <SelectItem key={c} value={c} className="py-3">{c}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-4">
+              <Select value={collegeFilter} onValueChange={setCollegeFilter}>
+                <SelectTrigger className="w-64 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-3 h-3 text-primary" />
+                    <SelectValue placeholder="All Colleges" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="glass-card border-white/5 rounded-2xl">
+                  <SelectItem value="all" className="font-bold py-3">Global (All Depts)</SelectItem>
+                  {COLLEGES.map(c => <SelectItem key={c} value={c} className="py-3">{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
 
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-48 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent className="glass-card border-white/5 rounded-2xl">
-                <SelectItem value="all" className="font-bold py-3">All Visitor Types</SelectItem>
-                <SelectItem value="Student" className="py-3">Students Only</SelectItem>
-                <SelectItem value="Employee" className="py-3">Faculty & Staff</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-48 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent className="glass-card border-white/5 rounded-2xl">
+                  <SelectItem value="all" className="font-bold py-3">All Visitor Types</SelectItem>
+                  <SelectItem value="Student" className="py-3">Students Only</SelectItem>
+                  <SelectItem value="Employee" className="py-3">Faculty & Staff</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={reasonFilter} onValueChange={setReasonFilter}>
+                <SelectTrigger className="w-56 h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-primary/20 font-black text-xs uppercase tracking-widest px-6">
+                  <SelectValue placeholder="All Reasons" />
+                </SelectTrigger>
+                <SelectContent className="glass-card border-white/5 rounded-2xl">
+                  <SelectItem value="all" className="font-bold py-3">All Reasons</SelectItem>
+                  {REASONS.map(r => <SelectItem key={r} value={r} className="py-3">{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
 
