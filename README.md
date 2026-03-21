@@ -47,7 +47,7 @@ First, run the development server:
 npm run dev
 ```
 
-Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
+Open [http://localhost:9002](http://192.168.1.10:9002) with your browser to see the result.
 
 ---
 © 2024 New Era University. Official Institutional Tool.
